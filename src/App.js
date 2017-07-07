@@ -4,19 +4,38 @@ import update from 'react-addons-update';
 import logo from './logo.svg';
 import './App.css';
 import Message from './Message';
-import Lorem from './lorem';
+// import Lorem from './lorem';
 import Input from './input';
 
 class App extends Component {
   render() {
     return (
       <div className="wrapper">
-      <div className="messages" ref="messages">
-        { this.state.messages.map((a, i)=> <Message key={i} message={a} />) }
-      </div>
-        <Input placeholder="Hello!" submit={this.submit.bind(this)} />
+        <div className="messages" ref="messages">
+          { 
+            this.state.messages.map((a, i, arr) => (
+              <Message
+                key={i}
+                message={a}
+                templateButton={ this.handleAction.bind(this) }
+                newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
+            ))
+          }
+        </div>
+        <div className="quick">{
+          this.state.currentQuickActions.map(
+            (a)=>(
+              <a href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
+            )
+          )
+        }</div>
+        <Input placeholder="Hello!" submit={this.submit.bind(this)} />        
       </div>
     );
+  };
+
+  handleAction(data) {
+    this.post({ type: 'action', payload: { payload: data.payload }});
   };
 
   componentDidMount() {
@@ -35,19 +54,24 @@ class App extends Component {
           self.refs.messages.scrollHeight,
           Math.min(1, (Date.now() - self.easeTime) / 5000)
         );
+
+        if (Math.round(self.refs.messages.scrollHeight - self.refs.messages.scrollTop) === self.refs.messages.clientHeight) {
+          self.shouldBeEasing = false;
+        }
       }
     }, 16);
 
     self.refs.messages.onscroll = () => {
       // self.shouldBeEasing = false;
     }
+
+    self.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
   };
 
   shouldBeEasing = false;
 
   submit(e) {
-    // console.log(e);
-    this.post({ content: e.target.value, local: true });
+    this.send({ content: e.target.value, local: true });
   };
 
   pushMessage(message) {
@@ -62,23 +86,41 @@ class App extends Component {
     this.easeTime = Date.now();
   };
 
-  post(message) {
+  handleResponse(response) {
+    const self = this;
+    response.forEach((m)=>{
+      self.pushMessage(m);
+
+      this.setState(update(self.state, {
+        currentQuickActions: {
+          $set: m.quickActions || [],
+        }
+      }));
+    });
+  };
+
+  send(message) {
     const self = this;
     self.pushMessage(message);
+    self.post({ type: 'message', payload: { text: message.content } });
+  };
 
-    fetch('https://api.kit.community/conversations/webhook/http?constituent_id=9', {
+  post(payload) {
+    const self = this;
+    const PROD_URL = 'https://api.kit.community/conversations/webhook/http?constituent_id=9';
+    const DEV_URL = 'http://198.211.106.215:5000/conversations/webhook/http?organization_id=42&constituent_id=1';
+    fetch(DEV_URL, {
       method: "POST",
-      body: JSON.stringify({ text: message.content })
-    }).then(a => a.json())
-    .then((response) => {
-      response.forEach((m)=>{
-        self.pushMessage(m);
-      });
-    });
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(a => a.json()).then(self.handleResponse.bind(self));
   }
 
   state = {
     messages: [],
+    currentQuickActions: [],
   };
 }
 

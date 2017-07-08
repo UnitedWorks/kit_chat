@@ -108,7 +108,7 @@ class App extends Component {
   post(payload) {
     const self = this;
     const PROD_URL = 'https://api.kit.community/conversations/webhook/http?constituent_id=9';
-    const DEV_URL = 'http://localhost:5000/conversations/webhook/http?organization_id=5&constituent_id=1';
+    const DEV_URL = 'http://127.0.0.1:5000/conversations/webhook/http?organization_id=5&constituent_id=1';
     fetch(DEV_URL, {
       method: "POST",
       body: JSON.stringify(payload),

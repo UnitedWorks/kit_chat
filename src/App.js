@@ -109,6 +109,7 @@ class App extends Component {
     const self = this;
     console.log(process.env.NODE_ENV);
     const ENV = (process.env.NODE_ENV === 'production') ?
+        'https://api.kit.community/conversations/webhook/http?organization_id=2&constituent_id=1' 
       : 'http://127.0.0.1:5000/conversations/webhook/http?organization_id=5&constituent_id=1';
 
     fetch(ENV, {

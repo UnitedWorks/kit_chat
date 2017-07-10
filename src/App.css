@@ -5,63 +5,48 @@
   margin: 0;
   padding: 0;
   border: 0;
-  color: #333;
-}
+  color: #333; }
 
 a {
   color: #3237ff;
-  text-decoration: none;
-}
+  text-decoration: none; }
 
 #root, .wrapper, html {
-  height: 100%;
-}
+  height: 100%; }
 
 .messages {
   display: flex;
   flex-flow: column;
-
   padding: 20px 3px;
   /*box-shadow: 0px 0px 3px #DDD;*/
-  
   overflow-y: auto;
   flex: 1 0 0;
-
-    /*background: #3237ff;*/
-  /*color: #FFF;*/
-}
+  /*background: #3237ff;*/
+  /*color: #FFF;*/ }
 
 .messages::-webkit-scrollbar-track {
-  background-color: #F5F5F5;
-}
+  background-color: #F5F5F5; }
 
 .messages::-webkit-scrollbar {
   width: 10px;
-  background-color: #DDD;
-}
+  background-color: #DDD; }
 
 .messages::-webkit-scrollbar-thumb {
-  background-color: #AAA;
-}
+  background-color: #AAA; }
 
 .message {
-  margin-bottom: 18px;
-  
-
+  margin-top: 12px;
   display: flex;
   flex-flow: column;
-
   align-self: flex-start;
   align-items: flex-start;
-
   flex-shrink: 0;
   position: relative;
-
   animation: new-message 0.7s ease-out;
-  min-height: 35px;
+  transition: all 1s; }
 
-  transition: all 1s;
-}
+.message.series {
+  margin-top: 2px; }
 
 .message .icon {
   margin-right: 10px;
@@ -69,141 +54,154 @@ a {
   background: #84c0ff;
   width: 25px;
   height: 25px;
-
-  align-self: flex-end;
-}
+  align-self: flex-end; }
 
 .message .body {
   background: #FFF;
   padding: 5px 10px 5px 10px;
   border-radius: 25px;
-  background: #EFEFEF;
-}
+  background: #EFEFEF; }
 
 .message .sender {
   font-size: 14px;
   padding: 0px 10px;
-  color: #DDD;
-}
+  color: #DDD; }
 
 .local {
   align-self: flex-end;
   align-items: flex-end;
-  clear: both;
-}
+  clear: both; }
 
 .local .icon {
   align-self: flex-end;
-  margin-left: 10px;
-}
+  margin-left: 10px; }
 
 .icon.red {
-  background: #ff849a;
-}
+  background: #ff849a; }
 
 @keyframes new-message {
   0% {
     opacity: 0;
-    top: 10px;
-  }
-
+    top: 10px; }
   100% {
     opacity: 1;
-    top: 0px;
-  }
-}
+    top: 0px; } }
 
-.body :not(.local){
+.body :not(.local) {
   overflow: hidden;
   white-space: nowrap;
   margin: 0 auto;
   letter-spacing: .15em;
-  animation:
-    typing 3.5s steps(40, end);
-    animation: type 4s steps(60, end); 
-}
+  animation: typing 3.5s steps(40, end);
+  animation: type 4s steps(60, end); }
 
-@keyframes type{ 
-  from { width: 0; } 
-  to: {width: 100% };
-}
+@keyframes type {
+  from {
+    width: 0; }
+  to-width: 100%; }
 
 .wrapper {
   display: flex;
   flex-flow: column;
   max-height: 100vh;
   height: 100vh;
-
   width: 100%;
   max-width: 800px;
-  margin: 0px auto;
-}
+  margin: 0px auto; }
 
 input {
   border: 1px solid #DDD;
   padding: 10px;
-  width: 100%;
-}
+  width: 100%; }
 
 .template {
-  overflow: hidden;
-  overflow-x: scroll;
   display: flex;
-  flex-flow: row nowrap;
-  min-height: 400px;
-  padding-bottom: 10px;
-  margin-bottom: 8px;
-}
-
-
-.template::-webkit-scrollbar {
-  display: none;
-}
-
-.card {
-  flex: 1 0 75%;
-  max-width: 350px;
-  margin: 0px 5px;
-  box-shadow: 0px 1px 4px #DDD;
-  display: flex;
-  flex-flow: column;
-}
-
-.card img {
-  display: inline-block;
-  width: 100%;
-  max-height: 50%;
-  overflow-y: hidden;
-  object-fit: cover;
-}
-
-.card .info {
-  padding: 5px;
-}
-
-.buttons {
-  display: flex;
-  flex-flow: column;
-  align-items: flex-end;
-
-  padding: 5px;
-  width: 100%;
-  flex: auto 0 0;
-  margin-top: auto;
-  padding: 10px;
-}
-
-.buttons a {
-  color: #3237ff;
-  padding: 5px 0px;
-  text-decoration: none;
-  min-width: 100%;
-  text-align: right;
-}
-
-.buttons a:not(:last-child) {
-  border-bottom: 1px solid #EFEFEF;
-}
+  margin-top: 16px; }
+  .template .card {
+    box-shadow: 0px 1px 4px #DDD;
+    display: flex; }
+  .template .buttons {
+    display: flex;
+    flex-flow: column;
+    align-items: flex-end;
+    padding: 5px;
+    width: 100%;
+    flex: auto 0 0;
+    margin-top: auto;
+    padding: 10px; }
+  .template .buttons a {
+    color: #3237ff;
+    text-decoration: none;
+    min-width: 100%; }
+  .template.generic {
+    margin-bottom: 10px;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    flex-flow: row nowrap;
+    min-height: 400px;
+    padding-bottom: 10px; }
+    .template.generic::-webkit-scrollbar {
+      display: none; }
+    .template.generic .card {
+      flex: 1 0 75%;
+      max-width: 350px;
+      margin: 0px 5px;
+      flex-flow: column; }
+    .template.generic .card img {
+      display: inline-block;
+      width: 100%;
+      max-height: 50%;
+      overflow-y: hidden;
+      object-fit: cover; }
+    .template.generic .card .info {
+      padding: 5px; }
+    .template.generic .buttons a:not(:last-child) {
+      border-bottom: 1px solid #EFEFEF; }
+    .template.generic .buttons a {
+      text-align: right;
+      padding: 5px 0px; }
+  .template.list {
+    flex-flow: column;
+    display: flex;
+    flex-shrink: 0; }
+    .template.list .card {
+      width: 100%;
+      display: flex;
+      flex-flow: row;
+      padding: 10px; }
+    .template.list .info {
+      display: flex;
+      flex: 1 0 auto;
+      flex-flow: column; }
+    .template.list img {
+      flex: 0 0 50px;
+      height: 50px;
+      margin-right: 10px;
+      background: #fbfdff;
+      background: -moz-linear-gradient(-45deg, #fbfdff 0%, #f5faff 100%);
+      background: -webkit-linear-gradient(-45deg, #fbfdff 0%, #f5faff 100%);
+      background: linear-gradient(135deg, #fbfdff 0%, #f5faff 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fbfdff', endColorstr='#f5faff',GradientType=1 ); }
+  .template.button {
+    padding: 20px;
+    flex-flow: row;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0; }
+    .template.button > a {
+      color: #3C3EFF;
+      background: transparent;
+      cursor: pointer;
+      list-style: none;
+      display: inline-block;
+      margin: 0;
+      padding: 15px 28px;
+      line-height: 1;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 300;
+      border: 2px solid #3C3EFF;
+      border-radius: 100px; }
 
 .quick {
   display: flex;
@@ -211,14 +209,11 @@ input {
   align-content: space-between;
   padding: 0px 5px;
   overflow-x: auto;
-  white-space: nowrap;
-}
+  white-space: nowrap; }
 
 .quick::-webkit-scrollbar {
-  display: none;
-}
+  display: none; }
 
 .quick a {
   flex: auto 0 0;
-  padding: 5px 15px 5px 0px;
-}
+  padding: 5px 15px 5px 0px; }

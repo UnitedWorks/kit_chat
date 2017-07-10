@@ -34,10 +34,6 @@ class App extends Component {
     );
   };
 
-  handleAction(data) {
-    this.post({ type: 'action', payload: { payload: data.payload }});
-  };
-
   componentDidMount() {
     const self = this;
     // setInterval(()=>{
@@ -65,13 +61,49 @@ class App extends Component {
       // self.shouldBeEasing = false;
     }
 
-    self.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
+    if (this.state.constituent_id === null) {
+      self.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
+    }
   };
 
   shouldBeEasing = false;
 
+  /* An awful hack for now */
+  componentWillUpdate(nextProps, nextState) {
+    localStorage.setItem('state', JSON.stringify(nextState));
+  }
+
   submit(e) {
     this.send({ content: e.target.value, local: true });
+    e.target.value = "";
+  };
+
+  handleResponse(response) {
+    const self = this;
+    response.messages.forEach((m)=>{
+      self.pushMessage(m);
+
+      this.setState(update(self.state, {
+        currentQuickActions: {
+          $set: m.quickActions || [],
+        }
+      }));
+    });
+
+    this.setState(update(this.state, {
+      constituent_id: { $set: response.meta.constituent_id }
+    }));
+  };
+
+  handleAction(data) {
+    this.pushMessage({ content: data.title, local: true });
+    this.post({ type: 'action', payload: { payload: data.payload }});
+  };
+
+  send(message) {
+    const self = this;
+    self.pushMessage(message);
+    self.post({ type: 'message', payload: { text: message.content } });
   };
 
   pushMessage(message) {
@@ -86,44 +118,32 @@ class App extends Component {
     this.easeTime = Date.now();
   };
 
-  handleResponse(response) {
-    const self = this;
-    response.forEach((m)=>{
-      self.pushMessage(m);
-
-      this.setState(update(self.state, {
-        currentQuickActions: {
-          $set: m.quickActions || [],
-        }
-      }));
-    });
-  };
-
-  send(message) {
-    const self = this;
-    self.pushMessage(message);
-    self.post({ type: 'message', payload: { text: message.content } });
-  };
-
   post(payload) {
     const self = this;
-    console.log(process.env.NODE_ENV);
-    const ENV = (process.env.NODE_ENV === 'production') ?
-        'https://api.kit.community/conversations/webhook/http?organization_id=2&constituent_id=1' 
-      : 'http://127.0.0.1:5000/conversations/webhook/http?organization_id=5&constituent_id=1';
 
-    fetch(ENV, {
+    const ENV = (process.env.NODE_ENV === 'production') ? 'https://api.kit.community/conversations/webhook/http' : 'http://127.0.0.1:5000/conversations/webhook/http';
+
+    fetch(ENV +
+      '?organization_id=2' +
+      ((this.state.constituent_id) ? `&constituent_id=${this.state.constituent_id }` : ''), {
       method: "POST",
       body: JSON.stringify(payload),
       headers: {
         'Content-Type': 'application/json',
       },
     }).then(a => a.json()).then(self.handleResponse.bind(self));
-  }
+  };
+
+  constructor() {
+    super();
+    this.state = JSON.parse(localStorage.getItem('state')) || this.state;
+    console.log(JSON.stringify(this.state));
+  };
 
   state = {
     messages: [],
     currentQuickActions: [],
+    constituent_id: null,
   };
 }
 

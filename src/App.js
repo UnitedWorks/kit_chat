@@ -14,7 +14,7 @@ class App extends Component {
     this.state = JSON.parse(localStorage.getItem('state')) || this.state;
     console.log(JSON.stringify(this.state));
   };
-
+  BASE_URL = process.env.NODE_ENV === 'production' ? 'https://api.kit.community' : 'http://127.0.0.1:5000';
   state = {
     messages: [],
     currentQuickActions: [],
@@ -25,8 +25,23 @@ class App extends Component {
     shouldBeEasing: false,
   };
 
+  componentWillMount() {
+    const orgId = new URL(window.location.href).searchParams.get('organization_id');
+    this.setState({
+      ...this.state,
+      organization_id: orgId,
+    });
+    return fetch(`${this.BASE_URL}/accounts/organization?id=${orgId}`, {
+      method: "GET",
+    }).then(p => p.json()).then(({ organization }) => {
+      return this.setState({
+        ...this.state,
+        organization_name: organization.name,
+      });
+    })
+  }
+
   render() {
-    console.log(this)
     return (
       <div className="wrapper">
 
@@ -52,7 +67,7 @@ class App extends Component {
           })}>
             <h4 style={({
                 color: '#FFF'
-              })}>{this.state.organization_name || 'Gov Chatbot Assistant'}</h4>
+              })}>{this.state.organization_name ? `${this.state.organization_name} Bot Assistant` : 'Gov Chatbot Assistant'}</h4>
             <img
               src="close.svg"
               onClick={() => this.setState({ ...this.state, openConversation: false })}
@@ -78,8 +93,8 @@ class App extends Component {
             }
             <div className="quick">{
                 this.state.currentQuickActions.map(
-                  (a)=>(
-                    <a href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
+                  (a, i)=>(
+                    <a key={i} href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
                   )
                 )
               }</div>
@@ -115,13 +130,6 @@ class App extends Component {
 
   componentDidMount() {
     const self = this;
-    // setInterval(()=>{
-    //   self.pushMessage({
-    //     content: (new Lorem()).generate(Math.floor(8)),
-    //     local: Math.random() > .5
-    //   });
-    // }, 1000);
-
     setInterval(()=> {
       if (this.state.shouldBeEasing) {
         self.refs.messages.scrollTop = Math.lerp(
@@ -136,6 +144,7 @@ class App extends Component {
       }
     }, 16);
 
+    // vvv This is throwing an error looking for onscroll?
     // self.refs.messages.onscroll = () => {
       // this.state.shouldBeEasing = false;
     // }
@@ -197,10 +206,7 @@ class App extends Component {
 
   post(payload) {
     const self = this;
-
-    const ENV = (process.env.NODE_ENV === 'production') ? 'https://api.kit.community/conversations/webhook/http' : 'http://127.0.0.1:5000/conversations/webhook/http';
-    console.log(window.location)
-    fetch(ENV +
+    fetch(`${this.BASE_URL}/conversations/webhook/http` +
       (this.state.organization_id ? `?organization_id=${this.state.organization_id}` : '') +
       (this.state.constituent_id ? `&constituent_id=${this.state.constituent_id }` : ''), {
       method: "POST",

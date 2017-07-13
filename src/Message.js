@@ -5,7 +5,6 @@ class Message extends Component {
     let message = this.props.message;
     let self = this;
 
-    console.log(message);
     return {
       message() {
         return (
@@ -16,7 +15,7 @@ class Message extends Component {
         );
       },
       template() {
-        return { 
+        return {
           generic() {
             return (
               <div className='template generic'>{
@@ -24,7 +23,7 @@ class Message extends Component {
                   return <div className="card">
                     <img src={element.image_url}/>
                     <div className="info">
-                      <h3>{element.title}</h3> 
+                      <h3>{element.title}</h3>
                       { element.subtitle ? <p>{element.subtitle}</p> : '' }
                     </div>
                     <div className="buttons">
@@ -44,7 +43,7 @@ class Message extends Component {
                     return <div className="card">
                       <img src={element.image_url}/>
                       <div className="info">
-                        <h3>{element.title}</h3> 
+                        <h3>{element.title}</h3>
                         <p>{element.subtitle}</p>
                       </div>
                     </div>;

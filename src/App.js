@@ -8,28 +8,107 @@ import Message from './Message';
 import Input from './input';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = JSON.parse(localStorage.getItem('state')) || this.state;
+    console.log(JSON.stringify(this.state));
+  };
+
+  state = {
+    messages: [],
+    currentQuickActions: [],
+    constituent_id: null,
+    organization_id: null,
+    organization_name: null,
+    openConversation: false,
+    shouldBeEasing: false,
+  };
+
   render() {
+    console.log(this)
     return (
       <div className="wrapper">
-        <div className="messages" ref="messages">
-          { 
-            this.state.messages.map((a, i, arr) => (
-              <Message
-                key={i}
-                message={a}
-                templateButton={ this.handleAction.bind(this) }
-                newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
-            ))
-          }
+
+        <div className="interface__body" style={({
+          position: 'relative',
+          transition: '200ms',
+          left: this.state.openConversation ? '0' : '480px',
+          overflow: this.state.openConversation ? 'initial' : 'hidden',
+          borderLeft: '2px solid #EDEDED'
+        })}>
+          <div style={({
+            position: 'fixed',
+            top: 0,
+            zIndex: 100,
+            width: '100vw',
+            maxHeight: '64px',
+            background: '#3C3EFF',
+            padding: '18px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            boxShadow: '0 4px 32px rgba(140, 147, 179, 0.2)',
+          })}>
+            <h4 style={({
+                color: '#FFF'
+              })}>{this.state.organization_name || 'Gov Chatbot Assistant'}</h4>
+            <img
+              src="close.svg"
+              onClick={() => this.setState({ ...this.state, openConversation: false })}
+              style={({
+                height: '32px',
+                width: 'auto',
+                cursor: 'pointer',
+              })}
+            />
+          </div>
+          <div className="messages" ref="messages" style={({
+            padding: '64px 18px',
+            background: '#FFF',
+          })}>
+            {
+              this.state.messages.map((a, i, arr) => (
+                <Message
+                  key={i}
+                  message={a}
+                  templateButton={ this.handleAction.bind(this) }
+                  newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
+              ))
+            }
+            <div className="quick">{
+                this.state.currentQuickActions.map(
+                  (a)=>(
+                    <a href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
+                  )
+                )
+              }</div>
+          </div>
+        <Input submit={this.submit.bind(this)} />
         </div>
-        <div className="quick">{
-          this.state.currentQuickActions.map(
-            (a)=>(
-              <a href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
-            )
-          )
-        }</div>
-        <Input placeholder="Hello!" submit={this.submit.bind(this)} />        
+
+        <div style={({
+          position: 'fixed',
+          bottom: '32px',
+          right: '32px',
+          height: this.state.openConversation ? '0px' : '64px',
+          width: this.state.openConversation ? '0px' : '64px',
+          background: '#3C3EFF',
+          borderRadius: '50%',
+          boxShadow: '0 4px 32px rgba(140, 147, 179, 0.8)',
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          transition: '150ms',
+          padding: this.state.openConversation ? '0' : '8px',
+        })} onClick={() => this.setState({ ...this.state, openConversation: true })}>
+          <img src="convo.svg" style={({
+              height: this.state.openConversation ? '0px' : 'initial',
+              width: this.state.openConversation ? '0px' : 'initial',
+          })} />
+        </div>
+
       </div>
     );
   };
@@ -44,7 +123,7 @@ class App extends Component {
     // }, 1000);
 
     setInterval(()=> {
-      if (self.shouldBeEasing) {
+      if (this.state.shouldBeEasing) {
         self.refs.messages.scrollTop = Math.lerp(
           self.refs.messages.scrollTop,
           self.refs.messages.scrollHeight,
@@ -52,21 +131,19 @@ class App extends Component {
         );
 
         if (Math.round(self.refs.messages.scrollHeight - self.refs.messages.scrollTop) === self.refs.messages.clientHeight) {
-          self.shouldBeEasing = false;
+          this.state.shouldBeEasing = false;
         }
       }
     }, 16);
 
-    self.refs.messages.onscroll = () => {
-      // self.shouldBeEasing = false;
-    }
+    // self.refs.messages.onscroll = () => {
+      // this.state.shouldBeEasing = false;
+    // }
 
     if (this.state.constituent_id === null) {
       self.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
     }
   };
-
-  shouldBeEasing = false;
 
   /* An awful hack for now */
   componentWillUpdate(nextProps, nextState) {
@@ -114,7 +191,7 @@ class App extends Component {
     });
 
     this.setState(newData);
-    this.shouldBeEasing = true;
+    this.state.shouldBeEasing = true;
     this.easeTime = Date.now();
   };
 
@@ -122,28 +199,16 @@ class App extends Component {
     const self = this;
 
     const ENV = (process.env.NODE_ENV === 'production') ? 'https://api.kit.community/conversations/webhook/http' : 'http://127.0.0.1:5000/conversations/webhook/http';
-
+    console.log(window.location)
     fetch(ENV +
-      '?organization_id=2' +
-      ((this.state.constituent_id) ? `&constituent_id=${this.state.constituent_id }` : ''), {
+      (this.state.organization_id ? `?organization_id=${this.state.organization_id}` : '') +
+      (this.state.constituent_id ? `&constituent_id=${this.state.constituent_id }` : ''), {
       method: "POST",
       body: JSON.stringify(payload),
       headers: {
         'Content-Type': 'application/json',
       },
     }).then(a => a.json()).then(self.handleResponse.bind(self));
-  };
-
-  constructor() {
-    super();
-    this.state = JSON.parse(localStorage.getItem('state')) || this.state;
-    console.log(JSON.stringify(this.state));
-  };
-
-  state = {
-    messages: [],
-    currentQuickActions: [],
-    constituent_id: null,
   };
 }
 

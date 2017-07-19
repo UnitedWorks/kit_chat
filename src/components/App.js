@@ -4,7 +4,6 @@ import update from 'react-addons-update';
 import logo from './logo.svg';
 import './App.css';
 import Message from './Message';
-// import Lorem from './lorem';
 import Input from './input';
 
 class App extends Component {

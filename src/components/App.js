@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import update from 'react-addons-update';
 import styled from 'styled-components';
 
@@ -109,7 +110,6 @@ class App extends Component {
     organization_id: null,
     organization_name: null,
     openConversation: false,
-    shouldBeEasing: false,
   };
 
   componentWillMount() {
@@ -127,7 +127,7 @@ class App extends Component {
         organization_name: organization.name,
         organization_picture: organization.messageEntries.filter(e => e.intro_picture_url)[0].intro_picture_url,
       });
-    })
+    });
   }
 
   componentDidMount() {
@@ -190,8 +190,8 @@ class App extends Component {
       }
     });
     this.setState(newData);
-    this.state.shouldBeEasing = true;
-    this.easeTime = Date.now();
+    const elem = ReactDOM.findDOMNode(this.refs.messages);
+    if (elem) elem.scrollIntoView(false);
   };
 
   post(payload) {

@@ -20,7 +20,7 @@ const Message = styled.div`
     background: #FFF;
     padding: 5px 10px 5px 10px;
     border-radius: 25px;
-    background: #EFEFEF;
+    background: #F8F8F8;
   }
 `;
 
@@ -86,7 +86,6 @@ const TemplateGeneric = TemplateBase.extend`
 
 const TemplateList = TemplateBase.extend`
   flex-flow: column;
-  display: flex;
   flex-shrink: 0;
   .card {
     width: 100%;
@@ -103,8 +102,7 @@ const TemplateList = TemplateBase.extend`
     flex: 0 0 50px;
     height: 50px;
     margin-right: 10px;
-    background: #fbfdff;
-    background: linear-gradient(135deg, #fbfdff 0%,#f5faff 100%);
+    background: #FFF;
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fbfdff', endColorstr='#f5faff',GradientType=1 );
   }
 `;
@@ -112,7 +110,6 @@ const TemplateList = TemplateBase.extend`
 const TemplateButton = TemplateBase.extend`
   padding: 20px;
   flex-flow: row;
-  display: flex;
   justify-content: center;
   flex-shrink: 0;
   & > a {
@@ -136,7 +133,6 @@ class MessageComponent extends Component {
   render() {
     let message = this.props.message;
     let self = this;
-
     return {
       message() {
         return (
@@ -152,15 +148,15 @@ class MessageComponent extends Component {
             return (
               <TemplateGeneric>
                 {
-                  message.content.elements.map((element) => {
-                    return <div className="card">
+                  message.content.elements.map((element, index) => {
+                    return <div key={index} className="card">
                       <img src={element.image_url}/>
                       <div className="info">
                         <h3>{element.title}</h3>
                         { element.subtitle ? <p>{element.subtitle}</p> : '' }
                       </div>
                       <div className="buttons">
-                        { element.buttons.map(self.buttonTemplate.bind(self)) }
+                        {element.buttons.map(self.buttonTemplate.bind(self))}
                       </div>
                     </div>;
                   })
@@ -173,8 +169,8 @@ class MessageComponent extends Component {
             return (
               <TemplateList>
                 {
-                  message.content.elements.map((element) => {
-                    return <div className="card">
+                  message.content.elements.map((element, index) => {
+                    return <div key={index} className="card">
                       <img src={element.image_url}/>
                       <div className="info">
                         <h3>{element.title}</h3>
@@ -184,7 +180,7 @@ class MessageComponent extends Component {
                   })
                 }
                 <div className="buttons">
-                  { message.content.buttons.map(self.buttonTemplate.bind(self)) }
+                  {message.content.buttons.map(self.buttonTemplate.bind(self))}
                 </div>
               </TemplateList>
             );
@@ -202,12 +198,12 @@ class MessageComponent extends Component {
     }[message.content.type || 'message']();
   };
 
-  buttonTemplate(button) {
+  buttonTemplate(button, index) {
     let self = this;
     if (button.type === 'postback') {
-      return <a onClick={ self.props.templateButton.bind(self, button) }>{button.title}</a>;
+      return <a key={index} onClick={self.props.templateButton.bind(self, button)}>{button.title}</a>;
     } else if (button.type === "web_url") {
-      return <a href={button.url} target="_blank" rel="noopener noreferrer">{ button.title}</a>;
+      return <a key={index} href={button.url} target="_blank" rel="noopener noreferrer">{ button.title}</a>;
     }
   }
 }

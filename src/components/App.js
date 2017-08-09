@@ -21,15 +21,13 @@ const ContainerHeader = styled.div`
   z-index: 100;
   width: 100vw;
   max-height: 64px;
-  background: #3C3EFF;
-  padding: 18px;
+  background: #FFF;
+  padding: 12px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  h4 {
-    color: #FFF;
-  }
+  border-bottom: 1px solid #DDD;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   img {
     height: 32px;
     width: auto;
@@ -43,7 +41,7 @@ const ContainerMessages = styled.div`
   flex-flow: column;
   min-height: 100vh;
   overflow-y: auto;
-  padding: 72px 16px;
+  padding: 64px 16px;
   background: #FFF;
 `;
 
@@ -67,7 +65,10 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = JSON.parse(localStorage.getItem('state')) || this.state;
+    this.state = localStorage.getItem('state') ? {
+      ...JSON.parse(localStorage.getItem('state')),
+      openConversation: false,
+    } : this.state;
     // Always start closed
     this.state.openConversation = false;
     // Grab Parent Window
@@ -117,13 +118,13 @@ class App extends Component {
   }
 
   showConversation() {
-    this.source.postMessage('show', '*');
     this.setState({ ...this.state, openConversation: true });
+    this.source.postMessage('show', '*');
   }
 
   hideConversation() {
-    this.source.postMessage('hide', '*');
     this.setState({ ...this.state, openConversation: false });
+    this.source.postMessage('hide', '*');
   }
 
   submit(e) {
@@ -186,36 +187,36 @@ class App extends Component {
       <Wrapper>
         <div style={({
           position: 'relative',
-          transition: '200ms',
+          transition: '100ms',
           left: this.state.openConversation ? '0' : '480px',
           overflow: this.state.openConversation ? 'initial' : 'hidden',
-          borderLeft: '2px solid #EDEDED'
+          borderLeft: '1px solid #DDD'
         })}>
-        <ContainerHeader>
-          <h4>{this.state.organization_name ? `${this.state.organization_name} Bot Assistant` : 'Gov Chatbot Assistant'}</h4>
-          <img src="close.svg" onClick={() => this.hideConversation()} />
-        </ContainerHeader>
-        <ContainerMessages ref="messages">
-          {
-            this.state.messages.map((a, i, arr) => (
-              <Message
-                key={i}
-                message={a}
-                templateButton={ this.handleAction.bind(this) }
-                newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
-            ))
-          }
-          <QuickReplies>
+          <ContainerHeader>
+            <p>{this.state.organization_name ? `${this.state.organization_name} Bot Assistant` : 'Gov Chatbot Assistant'}</p>
+            <img src="close.svg" onClick={() => this.hideConversation()} />
+          </ContainerHeader>
+          <ContainerMessages ref="messages">
             {
-              this.state.currentQuickActions.map(
-                (a, i)=>(
-                  <a key={i} href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
-                )
-              )
+              this.state.messages.map((a, i, arr) => (
+                <Message
+                  key={i}
+                  message={a}
+                  templateButton={ this.handleAction.bind(this) }
+                  newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
+              ))
             }
-          </QuickReplies>
-        </ContainerMessages>
-        <Input submit={this.submit.bind(this)} />
+            <QuickReplies>
+              {
+                this.state.currentQuickActions.map(
+                  (a, i)=>(
+                    <a key={i} href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
+                  )
+                )
+              }
+            </QuickReplies>
+          </ContainerMessages>
+          <Input submit={this.submit.bind(this)} />
         </div>
         <div style={({
           position: 'fixed',
@@ -241,7 +242,6 @@ class App extends Component {
       </Wrapper>
     );
   };
-
 }
 
 export default App;

@@ -4,11 +4,11 @@
   "private": true,
   "dependencies": {
     "localforage": "^1.5.0",
-    "node-sass-chokidar": "^0.0.3",
     "react": "^15.5.4",
     "react-addons-update": "^15.5.2",
     "react-dom": "^15.5.4",
-    "redux-persist": "^4.8.2"
+    "redux-persist": "^4.8.2",
+    "styled-components": "^2.1.2"
   },
   "devDependencies": {
     "react-scripts": "1.0.7"
@@ -17,8 +17,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build && cp src/manage-script.js build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "build-css": "node-sass-chokidar src/ -o src/",
-    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
+    "eject": "react-scripts eject"
   }
 }

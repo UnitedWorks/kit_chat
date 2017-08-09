@@ -3,7 +3,7 @@
   var body = document.querySelector('body'), frameWrapper = document.createElement('div');
   frameWrapper.id = 'hey-mayor-widget'; frameWrapper.style.zIndex = 2147483647; frameWrapper.style.position = 'absolute';
   var frame = document.createElement('iframe');
-  frame.src = 'http://localhost:3000?organization_id=' + org_id;
+  frame.src = 'https://chat.kit.community?organization_id=' + org_id;
   frame.id = 'hey-mayor-widget';
   frame.style.position = 'fixed'; frame.style.zIndex = 2147483647; frame.style.height = '72px'; frame.style.width = '72px'; frame.style.bottom = '24px'; frame.style.right = '24px'; frame.style.border = 'none'; frame.style.maxWidth = '100vw'; frame.style.maxHeight = '100vh';
   frameWrapper.appendChild(frame);

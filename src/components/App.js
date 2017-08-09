@@ -11,7 +11,13 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = JSON.parse(localStorage.getItem('state')) || this.state;
-    console.log(JSON.stringify(this.state));
+    // Always start closed
+    this.state.openConversation = false;
+    // Grab Parent Window
+    const self = this;
+    window.addEventListener('message', function(e) {
+      self.source = e.source;
+    });
   };
   BASE_URL = process.env.NODE_ENV === 'production' ? 'https://api.kit.community' : 'http://127.0.0.1:5000';
   state = {
@@ -40,6 +46,16 @@ class App extends Component {
     })
   }
 
+  showConversation() {
+    this.source.postMessage('show', '*');
+    this.setState({ ...this.state, openConversation: true });
+  }
+
+  hideConversation() {
+    this.source.postMessage('hide', '*');
+    this.setState({ ...this.state, openConversation: false });
+  }
+
   render() {
     return (
       <div className="wrapper">
@@ -62,14 +78,14 @@ class App extends Component {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            boxShadow: '0 4px 32px rgba(140, 147, 179, 0.2)',
+            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
           })}>
             <h4 style={({
                 color: '#FFF'
               })}>{this.state.organization_name ? `${this.state.organization_name} Bot Assistant` : 'Gov Chatbot Assistant'}</h4>
             <img
               src="close.svg"
-              onClick={() => this.setState({ ...this.state, openConversation: false })}
+              onClick={() => this.hideConversation()}
               style={({
                 height: '32px',
                 width: 'auto',
@@ -103,20 +119,20 @@ class App extends Component {
 
         <div style={({
           position: 'fixed',
-          bottom: '32px',
-          right: '32px',
+          bottom: '4px',
+          right: '4px',
           height: this.state.openConversation ? '0px' : '64px',
           width: this.state.openConversation ? '0px' : '64px',
           background: '#3C3EFF',
           borderRadius: '50%',
-          boxShadow: '0 4px 32px rgba(140, 147, 179, 0.8)',
+          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
           cursor: 'pointer',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           transition: '150ms',
           padding: this.state.openConversation ? '0' : '8px',
-        })} onClick={() => this.setState({ ...this.state, openConversation: true })}>
+        })} onClick={() => this.showConversation()}>
           <img src="convo.svg" style={({
               height: this.state.openConversation ? '0px' : 'initial',
               width: this.state.openConversation ? '0px' : 'initial',

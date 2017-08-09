@@ -22,16 +22,36 @@ const ContainerHeader = styled.div`
   width: 100vw;
   max-height: 64px;
   background: #FFF;
-  padding: 12px 16px;
+  padding: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #DDD;
+  border-bottom: 1px solid #EEE;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  color: #3C3EFF;
+  font-weight: 400;
+  div {
+    display: flex;
+    align-items: center;
+    p {
+      padding-top: 4px;
+    }
+    img {
+      height: 32px;
+      width: auto;
+      border-radius: 50%;
+      opacity: 1;
+    }
+  }
   img {
-    height: 32px;
+    height: 20px;
     width: auto;
     cursor: pointer;
+    margin: 8px;
+    opacity: 0.5;
+    &:hover {
+      opacity: 1;
+    }
   }
 `;
 
@@ -41,15 +61,16 @@ const ContainerMessages = styled.div`
   flex-flow: column;
   min-height: 100vh;
   overflow-y: auto;
-  padding: 64px 16px;
+  padding: 64px 16px 96px;
   background: #FFF;
 `;
 
 const QuickReplies = styled.div`
-  display: flex;
+  display: inline;
   flex-flow: row nowrap;
   align-content: space-between;
   padding: 5px;
+  margin: 12px 0;
   overflow-x: auto;
   white-space: nowrap;
   &::-webkit-scrollbar {
@@ -57,7 +78,14 @@ const QuickReplies = styled.div`
   }
   a {
     flex: auto 0 0;
+    color: #3237ff;
+    text-decoration: none;
+    min-width: 100%;
     padding: 5px 15px 5px 0px;
+    font-weight: 300;
+    &:hover {
+      cursor: pointer;
+    }
   }
 `;
 
@@ -97,6 +125,7 @@ class App extends Component {
       return this.setState({
         ...this.state,
         organization_name: organization.name,
+        organization_picture: organization.messageEntries.filter(e => e.intro_picture_url)[0].intro_picture_url,
       });
     })
   }
@@ -184,12 +213,15 @@ class App extends Component {
         <div style={({
           position: 'relative',
           transition: '100ms',
-          left: this.state.openConversation ? '0' : '480px',
+          left: this.state.openConversation ? '0' : '540px',
           overflow: this.state.openConversation ? 'initial' : 'hidden',
-          borderLeft: '1px solid #DDD'
+          borderLeft: '1px solid #EEE'
         })}>
           <ContainerHeader>
-            <p>{this.state.organization_name ? `${this.state.organization_name} Bot Assistant` : 'Gov Chatbot Assistant'}</p>
+            <div>
+              <img src={this.state.organization_picture} />
+              <p>{this.state.organization_name ? `Hey ${this.state.organization_name}!` : 'Your Local Gov Chatbot!'}</p>
+            </div>
             <img src="close.svg" onClick={() => this.hideConversation()} />
           </ContainerHeader>
           <ContainerMessages ref="messages">
@@ -198,6 +230,10 @@ class App extends Component {
                 <Message
                   key={i}
                   message={a}
+                  organization={({
+                    name: this.state.organization_name,
+                    picture: this.state.organization_picture,
+                  })}
                   templateButton={ this.handleAction.bind(this) }
                   newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
               ))
@@ -212,7 +248,10 @@ class App extends Component {
               }
             </QuickReplies>
           </ContainerMessages>
-          <Input submit={this.submit.bind(this)} />
+          <Input
+            organizationName={this.state.organization_name}
+            submit={this.submit.bind(this)}
+          />
         </div>
         <div style={({
           position: 'fixed',

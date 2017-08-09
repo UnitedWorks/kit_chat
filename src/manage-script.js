@@ -12,7 +12,7 @@
     frame.contentWindow.postMessage('init', '*');
     window.addEventListener('message', function(e) {
       if (e.data === 'show') {
-        frame.style.height = '100vh'; frame.style.width = '480px'; frame.style.bottom = '0'; frame.style.right = '0';
+        frame.style.height = '100vh'; frame.style.width = '540px'; frame.style.bottom = '0'; frame.style.right = '0';
       } else if (e.data === 'hide') {
         frame.style.height = '72px'; frame.style.width = '72px'; frame.style.bottom = '24px'; frame.style.right = '24px';
       }

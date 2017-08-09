@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const Message = styled.div`
   ${props => props.newSender ? 'margin-top: 12px;' : 'margin-top: 2px;'}
@@ -9,109 +9,118 @@ const Message = styled.div`
   align-items: flex-start;
   flex-shrink: 0;
   position: relative;
-  animation: new-message 0.7s ease-out;
-  transition: all 1s;
   span {
-    font-size: 14px;
+    font-size: 11px;
     padding: 5px 10px;
-    color: #DDD;
+    color: #9A9A9A;
   }
   div {
-    background: #FFF;
-    padding: 5px 10px 5px 10px;
-    border-radius: 25px;
+    font-size: 15px;
+    padding: 12px 12px 10px;
+    border-radius: 20px;
     background: #F8F8F8;
   }
+  ${props => {
+    if (props.localMessage) {
+      return css`
+        align-self: flex-end;
+        align-items: flex-end;
+        div {
+          color: #FFF;
+          background: #3C3EFF;
+        }
+      `;
+    }
+  }}
 `;
 
 const TemplateBase = styled.div`
   display: flex;
-  margin-top: 16px;
+  margin: 8px 0;
+  max-height: 480px;
   .card {
-    box-shadow: 0px 1px 4px #DDD;
     display: flex;
+    border-radius: 3px;
+    box-shadow: 0px 1px 4px #DDD;
+  }
+  .card .info {
+    padding: 16px;
+    h4, h5 {
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 13px;
+      line-height: 125%;
+    }
   }
   .buttons {
     display: flex;
     flex-flow: column;
     align-items: flex-end;
-
     padding: 5px;
     width: 100%;
     flex: auto 0 0;
     margin-top: auto;
     padding: 10px;
-  }
-  .buttons a {
-    color: #3237ff;
-    text-decoration: none;
-    min-width: 100%;
+    a {
+      color: #3237ff;
+      text-decoration: none;
+      min-width: 100%;
+      text-align: right;
+      padding: 8px 5px;
+      font-weight: 300;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    a:not(:last-child) {
+      border-bottom: 1px solid #FAFAFA;
+    }
   }
 `;
 
 const TemplateGeneric = TemplateBase.extend`
-  margin-bottom: 10px;
-  overflow-y: hidden;
-  overflow-x: scroll;
   flex-flow: row nowrap;
   min-height: 400px;
-  padding-bottom: 10px;
+  padding-bottom: 24px;
+  overflow-y: hidden;
+  overflow-x: scroll;
   &::-webkit-scrollbar {
     display: none;
   }
   .card {
     flex: 1 0 75%;
+    height: 400px;
     max-width: 350px;
     margin: 0px 5px;
     flex-flow: column;
   }
-  .card img {
+  .card object, .card img {
     display: inline-block;
     width: 100%;
     max-height: 50%;
     overflow-y: hidden;
-    object-fit: cover;
-  }
-  .card .info {
-    padding: 5px;
-  }
-  .buttons a:not(:last-child) {
-    border-bottom: 1px solid #EFEFEF;
-  }
-  .buttons a {
-    text-align: right;
-    padding: 5px 0px;
   }
 `;
 
 const TemplateList = TemplateBase.extend`
-  flex-flow: column;
-  flex-shrink: 0;
   .card {
+    display: flex;
     width: 100%;
-    display: flex;
-    flex-flow: row;
-    padding: 10px;
-  }
-  .info {
-    display: flex;
-    flex: 1 0 auto;
     flex-flow: column;
   }
-  img {
-    flex: 0 0 50px;
-    height: 50px;
-    margin-right: 10px;
-    background: #FFF;
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fbfdff', endColorstr='#f5faff',GradientType=1 );
+  .title {
+    padding: 24px 16px 16px;
+    border-bottom: 1px solid #F0F0F0;
+    h3 {
+      margin-bottom: 10px;
+    }
   }
 `;
 
 const TemplateButton = TemplateBase.extend`
-  padding: 20px;
+  margin-top: 10px;
   flex-flow: row;
-  justify-content: center;
-  flex-shrink: 0;
   & > a {
     color: #3C3EFF;
     background: transparent;
@@ -119,12 +128,11 @@ const TemplateButton = TemplateBase.extend`
     list-style: none;
     display: inline-block;
     margin: 0;
-    padding: 15px 28px;
-    line-height: 1;
+    padding: 12px 14px 8px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 300;
-    border: 2px solid #3C3EFF;
+    border: 1px solid #3C3EFF;
     border-radius: 100px;
   }
 `;
@@ -136,8 +144,8 @@ class MessageComponent extends Component {
     return {
       message() {
         return (
-          <Message newSender={self.props.newSender}>
-            {self.props.newSender && <span className="sender">{message.local ? 'You' : 'Bot'}</span>}
+          <Message newSender={self.props.newSender} localMessage={message.local}>
+            {self.props.newSender && <span className="sender">{message.local ? 'You' : 'Local Gov Bot'}</span>}
             <div>{message.content}</div>
           </Message>
         );
@@ -150,10 +158,12 @@ class MessageComponent extends Component {
                 {
                   message.content.elements.map((element, index) => {
                     return <div key={index} className="card">
-                      <img src={element.image_url}/>
+                      <object data={element.image_url} type="image/png">
+                        <img src={self.props.organization.picture || 'https://scontent.xx.fbcdn.net/v/t31.0-8/18589000_245329029282188_201697997574538644_o.png?oh=3c0896d62bc013dc7a520cd8aef2ec7d&oe=59B0D211'} />
+                      </object>
                       <div className="info">
-                        <h3>{element.title}</h3>
-                        { element.subtitle ? <p>{element.subtitle}</p> : '' }
+                        <h4>{element.title}</h4>
+                        {element.subtitle ? <p>{element.subtitle}</p> : ''}
                       </div>
                       <div className="buttons">
                         {element.buttons.map(self.buttonTemplate.bind(self))}
@@ -168,19 +178,26 @@ class MessageComponent extends Component {
           list() {
             return (
               <TemplateList>
-                {
-                  message.content.elements.map((element, index) => {
-                    return <div key={index} className="card">
-                      <img src={element.image_url}/>
-                      <div className="info">
-                        <h3>{element.title}</h3>
-                        <p>{element.subtitle}</p>
-                      </div>
-                    </div>;
-                  })
-                }
-                <div className="buttons">
-                  {message.content.buttons.map(self.buttonTemplate.bind(self))}
+                <div className="card">
+                  {
+                    message.content.elements.map((element, index) => {
+                      return (
+                        <div key={index}>
+                          {element.image_url && <div className="title">
+                            <h3>{element.title}</h3>
+                            <p>{element.subtitle}</p>
+                          </div>}
+                          {!element.image_url && <div className="info">
+                            <h5>{element.title}</h5>
+                            <p>{element.subtitle}</p>
+                          </div>}
+                        </div>
+                      );
+                    })
+                  }
+                  <div className="buttons">
+                    {message.content.buttons.map(self.buttonTemplate.bind(self))}
+                  </div>
                 </div>
               </TemplateList>
             );
@@ -188,9 +205,15 @@ class MessageComponent extends Component {
 
           button() {
             return (
-              <TemplateButton>
-                {message.content.buttons.map(self.buttonTemplate.bind(self))}
-              </TemplateButton>
+              <div>
+                <Message newSender={self.props.newSender}>
+                  <span className="sender">Local Gov Bot</span>
+                  <div>{message.content.text}</div>
+                </Message>
+                <TemplateButton>
+                  {message.content.buttons.map(self.buttonTemplate.bind(self))}
+                </TemplateButton>
+              </div>
             );
           }
         }[message.content.templateType || 'generic']();

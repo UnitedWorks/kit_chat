@@ -5,10 +5,29 @@ import App from './components/App';
 import { injectGlobal } from 'styled-components';
 
 injectGlobal`
+  @font-face {
+    font-family: 'BentonSans';
+    src: url('BentonSans-Book.otf') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'BentonSans';
+    src: url('BentonSans-Regular.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'BentonSans';
+    src: url('BentonSans-Medium.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+  }
   body {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
+    font-family: BentonSans, sans-serif;
+    font-weight: 200;
   }
   *, :after, :before {
     box-sizing: border-box;

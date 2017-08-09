@@ -65,12 +65,7 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = localStorage.getItem('state') ? {
-      ...JSON.parse(localStorage.getItem('state')),
-      openConversation: false,
-    } : this.state;
-    // Always start closed
-    this.state.openConversation = false;
+    this.state = JSON.parse(localStorage.getItem('state')) || this.state;
     // Grab Parent Window
     const self = this;
     window.addEventListener('message', function(e) {
@@ -94,6 +89,7 @@ class App extends Component {
     this.setState({
       ...this.state,
       organization_id: orgId,
+      openConversation: false,
     });
     return fetch(`${this.BASE_URL}/accounts/organization?id=${orgId}`, {
       method: "GET",

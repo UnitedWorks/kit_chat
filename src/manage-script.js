@@ -14,6 +14,7 @@
   frame.style.right = '24px';
   frame.style.border = 'none';
   frame.style.maxWidth = '100vw';
+  frame.style.background = 'none transparent';
   frameWrapper.appendChild(frame);
   body.appendChild(frameWrapper);
   frame.onload = function() {
@@ -21,18 +22,22 @@
     window.addEventListener('message', function(e) {
       if (e.data === 'show') {
         frame.style.height = '100%';
+        frame.style.maxHeight = '100vh';
         frame.style.width = '540px';
         frame.style.top = '0';
         frame.style.bottom = '0';
         frame.style.right = '0';
         frame.style.left = 'auto';
+        frame.style.overflow = 'visible';
       } else if (e.data === 'hide') {
         frame.style.height = '72px';
+        frame.style.maxHeight = 'initial';
         frame.style.width = '72px';
         frame.style.top = 'initial';
         frame.style.bottom = '24px';
         frame.style.right = '24px';
         frame.style.left = 'initial';
+        frame.style.overflow = 'hidden';
       }
     });
   }

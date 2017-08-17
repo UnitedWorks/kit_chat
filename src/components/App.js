@@ -14,21 +14,20 @@ const Wrapper = styled.div`
   width: 100%;
   max-width: 800px;
   margin: 0px auto;
+  overflow: hidden;
 `;
 
 const ContainerHeader = styled.div`
-  position: fixed;
-  top: 0;
+  display: inline-flex;
+  width: 100%;
   z-index: 100;
-  width: 100vw;
   max-height: 64px;
   background: #FFF;
-  padding: 24px;
-  display: flex;
+  padding: 32px 20px;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #EEE;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.05);
   color: #3C3EFF;
   font-weight: 400;
   div {
@@ -56,36 +55,44 @@ const ContainerHeader = styled.div`
   }
 `;
 
-const ContainerMessages = styled.div`
+const ContainerContent = styled.div`
   display: flex;
-  flex: 1 0 0;
+  flex: 1;
   flex-flow: column;
-  min-height: 100vh;
   overflow-y: auto;
-  padding: 64px 16px 96px;
   background: #FFF;
 `;
 
+const ContainerMessages = styled.div`
+  display: flex;
+  flex-flow: column;
+  overflow-y: scroll;
+  padding: 24px 0;
+  span {
+    margin: 2px 5px;
+  }
+`;
+
 const QuickReplies = styled.div`
-  display: inline;
-  flex-flow: row nowrap;
-  align-content: space-between;
-  padding: 5px;
-  margin: 12px 0;
-  overflow-x: auto;
-  white-space: nowrap;
+  padding: 12px 32px;
+  overflow: hidden;
+  overflow-x: scroll;
+  display: inline-flex;
+  min-height: 40px;
   &::-webkit-scrollbar {
     display: none;
   }
   a {
     flex: auto 0 0;
     color: #3237ff;
-    text-decoration: none;
-    min-width: 100%;
-    padding: 5px 15px 5px 0px;
+    margin: 5px 18px 5px 0px;
+    font-size: 14px;
     font-weight: 300;
     &:hover {
       cursor: pointer;
+    }
+    &:last-of-type {
+      padding-right: 24px;
     }
   }
 `;
@@ -125,7 +132,7 @@ class App extends Component {
       return this.setState({
         ...this.state,
         organization_name: organization.name,
-        organization_picture: organization.messageEntries.filter(e => e.intro_picture_url)[0].intro_picture_url,
+        organization_picture: (organization.messageEntries.filter(e => e.intro_picture_url)[0] || {}).intro_picture_url,
       });
     });
   }
@@ -152,9 +159,8 @@ class App extends Component {
     this.source.postMessage('hide', '*');
   }
 
-  submit(e) {
-    this.send({ content: e.target.value, local: true });
-    e.target.value = "";
+  submit(value) {
+    this.send({ content: value, local: true });
   };
 
   handleResponse(response) {
@@ -190,7 +196,7 @@ class App extends Component {
       }
     });
     this.setState(newData);
-    const elem = ReactDOM.findDOMNode(this.refs.messages);
+    const elem = ReactDOM.findDOMNode(this.refs.scrollToSpan);
     if (elem) elem.scrollIntoView(false);
   };
 
@@ -208,14 +214,22 @@ class App extends Component {
   };
 
   render() {
+    // Scroll to Bottom of Message Section
+    setTimeout(() => {
+      const elem = ReactDOM.findDOMNode(this.refs.scrollToSpan);
+      if (elem) elem.scrollIntoView(false);
+    });
+    // Return Element
     return (
       <Wrapper>
         <div style={({
           position: 'relative',
           transition: '100ms',
           left: this.state.openConversation ? '0' : '540px',
-          overflow: this.state.openConversation ? 'initial' : 'hidden',
-          borderLeft: '1px solid #EEE'
+          overflow: 'hidden',
+          borderLeft: '1px solid #EEE',
+          flexDirection: 'column',
+          display: this.state.openConversation ? 'flex' : 'none',
         })}>
           <ContainerHeader>
             <div>
@@ -224,34 +238,37 @@ class App extends Component {
             </div>
             <img src="close.svg" onClick={() => this.hideConversation()} />
           </ContainerHeader>
-          <ContainerMessages ref="messages">
-            {
-              this.state.messages.map((a, i, arr) => (
-                <Message
-                  key={i}
-                  message={a}
-                  organization={({
-                    name: this.state.organization_name,
-                    picture: this.state.organization_picture,
-                  })}
-                  templateButton={ this.handleAction.bind(this) }
-                  newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
-              ))
-            }
-            <QuickReplies>
+          <ContainerContent>
+            <ContainerMessages>
               {
-                this.state.currentQuickActions.map(
-                  (a, i)=>(
-                    <a key={i} href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
-                  )
-                )
+                this.state.messages.map((a, i, arr) => (
+                  <Message
+                    key={i}
+                    message={a}
+                    organization={({
+                      name: this.state.organization_name,
+                      picture: this.state.organization_picture,
+                    })}
+                    templateButton={ this.handleAction.bind(this) }
+                    newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
+                ))
               }
-            </QuickReplies>
-          </ContainerMessages>
-          <Input
-            organizationName={this.state.organization_name}
-            submit={this.submit.bind(this)}
-          />
+              {this.state.currentQuickActions && this.state.currentQuickActions.length > 0 && <QuickReplies>
+                {
+                  this.state.currentQuickActions.map(
+                    (a, i)=>(
+                      <a key={i} href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
+                    )
+                  )
+                }
+              </QuickReplies>}
+              <span ref="scrollToSpan"></span>
+            </ContainerMessages>
+            <Input
+              organizationName={this.state.organization_name}
+              submit={this.submit.bind(this)}
+            />
+          </ContainerContent>
         </div>
         <div style={({
           position: 'fixed',

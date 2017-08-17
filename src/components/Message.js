@@ -9,6 +9,7 @@ const Message = styled.div`
   align-items: flex-start;
   flex-shrink: 0;
   position: relative;
+  margin: 2px 20px;
   span {
     font-size: 11px;
     padding: 5px 10px;
@@ -59,7 +60,6 @@ const TemplateBase = styled.div`
     align-items: flex-end;
     padding: 5px;
     width: 100%;
-    flex: auto 0 0;
     margin-top: auto;
     padding: 10px;
     a {
@@ -81,8 +81,8 @@ const TemplateBase = styled.div`
 
 const TemplateGeneric = TemplateBase.extend`
   flex-flow: row nowrap;
-  min-height: 400px;
-  padding-bottom: 24px;
+  min-height: 420px;
+  margin: 8px 0;
   overflow-y: hidden;
   overflow-x: scroll;
   &::-webkit-scrollbar {
@@ -94,6 +94,12 @@ const TemplateGeneric = TemplateBase.extend`
     max-width: 350px;
     margin: 0px 5px;
     flex-flow: column;
+    &:first-of-type {
+      margin-left: 20px;
+    }
+    &:last-of-type {
+      margin-right: 20px;
+    }
   }
   .card object, .card img {
     display: inline-block;
@@ -104,6 +110,10 @@ const TemplateGeneric = TemplateBase.extend`
 `;
 
 const TemplateList = TemplateBase.extend`
+  display: block;
+  height: auto;
+  max-height: 100%;
+  margin: 8px 24px;
   .card {
     display: flex;
     width: 100%;
@@ -150,6 +160,7 @@ class MessageComponent extends Component {
           </Message>
         );
       },
+
       template() {
         return {
           generic() {
@@ -225,6 +236,10 @@ class MessageComponent extends Component {
     let self = this;
     if (button.type === 'postback') {
       return <a key={index} onClick={self.props.templateButton.bind(self, button)}>{button.title}</a>;
+    } else if (button.type === "phone_number") {
+      return <a key={index} href={`tel:${button.payload}`}>{ button.title}</a>;
+    } else if (button.type === "email") {
+      return <a key={index} href={`mailto:${button.email}`}>{ button.title}</a>;
     } else if (button.type === "web_url") {
       return <a key={index} href={button.url} target="_blank" rel="noopener noreferrer">{ button.title}</a>;
     }

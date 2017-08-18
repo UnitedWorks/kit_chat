@@ -58,9 +58,7 @@ const TemplateBase = styled.div`
     display: flex;
     flex-flow: column;
     align-items: flex-end;
-    padding: 5px;
     width: 100%;
-    margin-top: auto;
     padding: 10px;
     a {
       color: #3237ff;
@@ -81,31 +79,54 @@ const TemplateBase = styled.div`
 
 const TemplateGeneric = TemplateBase.extend`
   flex-flow: row nowrap;
-  min-height: 420px;
-  margin: 8px 0;
+  ${props => props.hasImages ? 'min-height: 420px;' : 'min-height: 180px;'}
+  padding: 8px 0;
   overflow-y: hidden;
   overflow-x: scroll;
   &::-webkit-scrollbar {
     display: none;
   }
-  .card {
-    flex: 1 0 75%;
-    height: 400px;
+  .card.image {
+    flex: 1 0 65%;
+    flex-flow: column;
+    justify-content: space-between;
+    min-height: 320px;
     max-width: 350px;
     margin: 0px 5px;
-    flex-flow: column;
+    border-radius: 6px;
+    overflow: hidden;
     &:first-of-type {
       margin-left: 20px;
     }
     &:last-of-type {
       margin-right: 20px;
     }
+    .body {
+      display: flex;
+      flex-direction: column;
+      .image-container {
+        height: 240px;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
   }
-  .card object, .card img {
-    display: inline-block;
-    width: 100%;
-    max-height: 50%;
-    overflow-y: hidden;
+  .card.imageless {
+    flex: 1 0 65%;
+    flex-flow: column;
+    justify-content: space-between;
+    min-height: 160px;
+    max-width: 350px;
+    margin: 0px 5px;
+    &:first-of-type {
+      margin-left: 20px;
+    }
+    &:last-of-type {
+      margin-right: 20px;
+    }
   }
 `;
 
@@ -165,16 +186,18 @@ class MessageComponent extends Component {
         return {
           generic() {
             return (
-              <TemplateGeneric>
+              <TemplateGeneric hasImages={message.content.elements.filter(e => e.image_url).length > 0}>
                 {
                   message.content.elements.map((element, index) => {
-                    return <div key={index} className="card">
-                      <object data={element.image_url} type="image/png">
-                        <img src={self.props.organization.picture || 'https://scontent.xx.fbcdn.net/v/t31.0-8/18589000_245329029282188_201697997574538644_o.png?oh=3c0896d62bc013dc7a520cd8aef2ec7d&oe=59B0D211'} />
-                      </object>
-                      <div className="info">
-                        <h4>{element.title}</h4>
-                        {element.subtitle ? <p>{element.subtitle}</p> : ''}
+                    return <div key={index} className={element.image_url ? 'card image' : 'card imageless'}>
+                      <div className="body">
+                        {element.image_url && <div className="image-container">
+                          <img src={element.image_url} onError={(e) => (e.target.src = self.props.organization.picture || 'https://scontent.xx.fbcdn.net/v/t31.0-8/18589000_245329029282188_201697997574538644_o.png?oh=3c0896d62bc013dc7a520cd8aef2ec7d&oe=59B0D211')} />
+                        </div>}
+                        <div className="info">
+                          <h4>{element.title}</h4>
+                          {element.subtitle ? <p>{element.subtitle}</p> : ''}
+                        </div>
                       </div>
                       <div className="buttons">
                         {element.buttons.map(self.buttonTemplate.bind(self))}
@@ -237,11 +260,11 @@ class MessageComponent extends Component {
     if (button.type === 'postback') {
       return <a key={index} onClick={self.props.templateButton.bind(self, button)}>{button.title}</a>;
     } else if (button.type === "phone_number") {
-      return <a key={index} href={`tel:${button.payload}`}>{ button.title}</a>;
+      return <a key={index} href={`tel:${button.payload}`}>Call: {button.title}</a>;
     } else if (button.type === "email") {
-      return <a key={index} href={`mailto:${button.email}`}>{ button.title}</a>;
+      return <a key={index} href={`mailto:${button.email}`}>Email: {button.title}</a>;
     } else if (button.type === "web_url") {
-      return <a key={index} href={button.url} target="_blank" rel="noopener noreferrer">{ button.title}</a>;
+      return <a key={index} href={button.url} target="_blank" rel="noopener noreferrer">{button.title}</a>;
     }
   }
 }

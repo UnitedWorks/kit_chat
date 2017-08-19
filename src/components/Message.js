@@ -60,6 +60,7 @@ const TemplateBase = styled.div`
     align-items: flex-end;
     width: 100%;
     padding: 10px;
+    font-size: 14px;
     a {
       color: #3237ff;
       text-decoration: none;
@@ -79,7 +80,7 @@ const TemplateBase = styled.div`
 
 const TemplateGeneric = TemplateBase.extend`
   flex-flow: row nowrap;
-  ${props => props.hasImages ? 'min-height: 420px;' : 'min-height: 180px;'}
+  ${props => props.hasImages ? 'min-height: 420px;' : 'min-height: 210px;'}
   padding: 8px 0;
   overflow-y: hidden;
   overflow-x: scroll;
@@ -87,7 +88,7 @@ const TemplateGeneric = TemplateBase.extend`
     display: none;
   }
   .card.image {
-    flex: 1 0 65%;
+    flex: 1 0 62%;
     flex-flow: column;
     justify-content: space-between;
     min-height: 320px;
@@ -115,7 +116,7 @@ const TemplateGeneric = TemplateBase.extend`
     }
   }
   .card.imageless {
-    flex: 1 0 65%;
+    flex: 1 0 62%;
     flex-flow: column;
     justify-content: space-between;
     min-height: 160px;
@@ -196,7 +197,7 @@ class MessageComponent extends Component {
                         </div>}
                         <div className="info">
                           <h4>{element.title}</h4>
-                          {element.subtitle ? <p>{element.subtitle}</p> : ''}
+                          {element.subtitle ? <p>{element.subtitle.length > 150 ? `${element.subtitle.substr(0, 150)}...` : element.subtitle}</p> : ''}
                         </div>
                       </div>
                       <div className="buttons">

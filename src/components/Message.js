@@ -91,8 +91,9 @@ const TemplateGeneric = TemplateBase.extend`
     flex: 1 0 62%;
     flex-flow: column;
     justify-content: space-between;
-    min-height: 320px;
+    min-width: 280px;
     max-width: 350px;
+    min-height: 320px;
     margin: 0px 5px;
     border-radius: 6px;
     overflow: hidden;
@@ -177,7 +178,7 @@ class MessageComponent extends Component {
       message() {
         return (
           <Message newSender={self.props.newSender} localMessage={message.local}>
-            {self.props.newSender && <span className="sender">{message.local ? 'You' : 'Local Gov Bot'}</span>}
+            {self.props.newSender && <span className="sender">{message.local ? 'You' : (`${self.props.organization.name} Bot` || 'Gov Bot')}</span>}
             <div>{message.content}</div>
           </Message>
         );
@@ -242,7 +243,7 @@ class MessageComponent extends Component {
             return (
               <div>
                 <Message newSender={self.props.newSender}>
-                  <span className="sender">Local Gov Bot</span>
+                  <span className="sender">{`${self.props.organization.name} Bot` || 'Local Gov Bot'}</span>
                   <div>{message.content.text}</div>
                 </Message>
                 <TemplateButton>
@@ -265,7 +266,7 @@ class MessageComponent extends Component {
     } else if (button.type === "email") {
       return <a key={index} href={`mailto:${button.email}`}>Email: {button.title}</a>;
     } else if (button.type === "web_url") {
-      return <a key={index} href={button.url} target="_blank" rel="noopener noreferrer">{button.title}</a>;
+      return <a key={index} href={button.url} target="_blank" rel="noopener noreferrer">Website: {button.title.length > 32 ? `${button.title.substr(0, 32)}...` : button.title}</a>;
     }
   }
 }

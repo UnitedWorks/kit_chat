@@ -198,7 +198,7 @@ class MessageComponent extends Component {
                         </div>}
                         <div className="info">
                           <h4>{element.title}</h4>
-                          {element.subtitle ? <p>{element.subtitle.length > 150 ? `${element.subtitle.substr(0, 150)}...` : element.subtitle}</p> : ''}
+                          {element.subtitle ? <p>{element.subtitle.length > 128 ? `${element.subtitle.substr(0, 128)}...` : element.subtitle}</p> : ''}
                         </div>
                       </div>
                       <div className="buttons">

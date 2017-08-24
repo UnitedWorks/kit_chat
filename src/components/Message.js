@@ -152,7 +152,7 @@ const TemplateList = TemplateBase.extend`
 `;
 
 const TemplateButton = TemplateBase.extend`
-  margin-top: 10px;
+  margin: 8px 24px;
   flex-flow: row;
   & > a {
     color: #3C3EFF;
@@ -254,7 +254,7 @@ class MessageComponent extends Component {
           }
         }[message.content.templateType || 'generic']();
       }
-    }[message.content.type || 'message']();
+    }[(message.content && message.content.type) || 'message']();
   };
 
   buttonTemplate(button, index) {

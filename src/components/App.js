@@ -74,26 +74,32 @@ const ContainerMessages = styled.div`
 `;
 
 const QuickReplies = styled.div`
-  padding: 12px 32px;
-  overflow: hidden;
+  padding: 12px 24px 0;
   overflow-x: scroll;
-  display: inline-flex;
-  min-height: 40px;
+  min-height: 50px;
   &::-webkit-scrollbar {
     display: none;
   }
-  a {
-    flex: auto 0 0;
-    color: #3237ff;
-    margin: 5px 18px 5px 0px;
-    font-size: 14px;
+  div {
+    height: 100%;
+    width: ${props => props.numReplies ? `${props.numReplies * 160}px` : '0px'};
+    overflow-y: hidden;
+    overflow-x: scroll;
+  }
+  div > a {
+    color: #3C3EFF;
+    background: transparent;
+    cursor: pointer;
+    list-style: none;
+    display: inline-block;
+    margin: 0;
+    margin-right: 5px;
+    padding: 12px 14px 8px;
+    text-decoration: none;
+    font-size: 13px;
     font-weight: 300;
-    &:hover {
-      cursor: pointer;
-    }
-    &:last-of-type {
-      padding-right: 24px;
-    }
+    border: 1px solid #3C3EFF;
+    border-radius: 100px;
   }
 `;
 
@@ -253,14 +259,16 @@ class App extends Component {
                     newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
                 ))
               }
-              {this.state.currentQuickActions && this.state.currentQuickActions.length > 0 && <QuickReplies>
-                {
-                  this.state.currentQuickActions.map(
-                    (a, i)=>(
-                      <a key={i} href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
+              {!this.state.messages[this.state.messages.length - 1].local && this.state.currentQuickActions && this.state.currentQuickActions.length > 0 && <QuickReplies numReplies={this.state.currentQuickActions.length}>
+                <div>
+                  {
+                    this.state.currentQuickActions.map(
+                      (a, i)=>(
+                        <a key={i} href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
+                      )
                     )
-                  )
-                }
+                  }
+                </div>
               </QuickReplies>}
               <span ref="scrollToSpan"></span>
             </ContainerMessages>

@@ -259,7 +259,7 @@ class App extends Component {
                     newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
                 ))
               }
-              {!this.state.messages[this.state.messages.length - 1].local && this.state.currentQuickActions && this.state.currentQuickActions.length > 0 && <QuickReplies numReplies={this.state.currentQuickActions.length}>
+              {(this.state.messages.length > 0 && !this.state.messages[this.state.messages.length - 1].local) && this.state.currentQuickActions && this.state.currentQuickActions.length > 0 && <QuickReplies numReplies={this.state.currentQuickActions.length}>
                 <div>
                   {
                     this.state.currentQuickActions.map(

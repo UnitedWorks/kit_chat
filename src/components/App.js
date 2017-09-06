@@ -56,10 +56,6 @@ const ContainerHeader = styled.div`
 `;
 
 const HelloBar = styled.a`
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
   background: #0084ff;
   padding: 12px 24px 10px;
   color: #FFF;
@@ -250,9 +246,6 @@ class App extends Component {
           flexDirection: 'column',
           display: this.state.openConversation ? 'flex' : 'none',
         })}>
-        {this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar href={`https://m.me/${entry.facebook_entry_id}`} target="_blank" rel="noopener noreferrer">
-          Always forget what night is recycling? <u>Use our Messenger Bot →</u>
-        </HelloBar>)}
           <ContainerHeader>
             <div>
               <img src={this.state.organization_picture} />
@@ -292,6 +285,9 @@ class App extends Component {
               organizationName={this.state.organization_name}
               submit={this.submit.bind(this)}
             />
+            {this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar href={`https://m.me/${entry.facebook_entry_id}`} target="_blank" rel="noopener noreferrer">
+              Always forget it's trash night? <u>Get Reminders →</u>
+            </HelloBar>)}
           </ContainerContent>
         </div>
         <div style={({

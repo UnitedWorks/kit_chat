@@ -55,6 +55,19 @@ const ContainerHeader = styled.div`
   }
 `;
 
+const HelloBar = styled.a`
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: #0084ff;
+  padding: 12px 24px 10px;
+  color: #FFF;
+  font-size: 12px;
+  text-decoration: none;
+  text-align: center;
+`;
+
 const ContainerContent = styled.div`
   display: flex;
   flex: 1;
@@ -139,6 +152,7 @@ class App extends Component {
         ...this.state,
         organization_name: organization.name,
         organization_picture: (organization.messageEntries.filter(e => e.intro_picture_url)[0] || {}).intro_picture_url,
+        organization_entries: organization.messageEntries
       });
     });
   }
@@ -230,13 +244,15 @@ class App extends Component {
       <Wrapper>
         <div style={({
           position: 'relative',
-          transition: '100ms',
           left: this.state.openConversation ? '0' : '540px',
           overflow: 'hidden',
           borderLeft: '1px solid #EEE',
           flexDirection: 'column',
           display: this.state.openConversation ? 'flex' : 'none',
         })}>
+        {this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar href={`https://m.me/${entry.facebook_entry_id}`} target="_blank" rel="noopener noreferrer">
+          Always forget what night is recycling? <u>Use our Messenger Bot →</u>
+        </HelloBar>)}
           <ContainerHeader>
             <div>
               <img src={this.state.organization_picture} />
@@ -286,17 +302,37 @@ class App extends Component {
           width: this.state.openConversation ? '0px' : '64px',
           background: '#3C3EFF',
           borderRadius: '50%',
-          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 1px 6px rgba(0, 0, 50, 0.5)',
           cursor: 'pointer',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          padding: this.state.openConversation ? '0' : '15px',
           transition: '150ms',
-          padding: this.state.openConversation ? '0' : '8px',
         })} onClick={() => this.showConversation()}>
+          <div style={({
+            position: 'absolute',
+            top: '-3px',
+            right: '-3px',
+            width: '22px',
+            height: '22px',
+            borderRadius: '50%',
+            background: '#F11F58',
+            objectFit: 'scale-down',
+            boxShadow: '0 1px 2px rgba(0, 0, 50, 0.6)',
+            padding: '7px 4px 4px',
+            fontSize: '9px',
+            fontWeight: '500',
+            display: this.state.openConversation ? 'none' : 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#FFF',
+          })}>
+            {this.state.messages.length}
+          </div>
           <img src="convo.svg" style={({
-              height: this.state.openConversation ? '0px' : 'initial',
-              width: this.state.openConversation ? '0px' : 'initial',
+              height: this.state.openConversation ? '0px' : '100%',
+              width: this.state.openConversation ? '0px' : '100%',
           })} />
         </div>
       </Wrapper>

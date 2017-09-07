@@ -227,7 +227,7 @@ class App extends Component {
 
     if (tts && !message.local && typeof message.content === 'string') {
       let utterance = new SpeechSynthesisUtterance( message.content );
-      utterance.voice = window.speechSynthesis.getVoices()[ 3 ];
+      utterance.voice = window.speechSynthesis.getVoices().filter(x => (x.name === "Google US English"))[0];
       utterance.pitch = 1;
       window.speechSynthesis.speak( utterance );
     }

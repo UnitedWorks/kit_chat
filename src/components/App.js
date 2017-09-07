@@ -136,6 +136,8 @@ class App extends Component {
     organization_id: null,
     organization_name: null,
     openConversation: false,
+    show: false,
+    tts: false,
   };
 
   componentWillMount() {
@@ -152,7 +154,8 @@ class App extends Component {
         ...this.state,
         organization_name: organization.name,
         organization_picture: (organization.messageEntries.filter(e => e.intro_picture_url)[0] || {}).intro_picture_url,
-        organization_entries: organization.messageEntries
+        organization_entries: organization.messageEntries,
+        show: !!new URL(window.location.href).searchParams.get('show'),
       });
     });
   }
@@ -162,8 +165,7 @@ class App extends Component {
     if (this.state.constituent_id === null) {
       self.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
     }
-
-    if (!!new URL(window.location.href).searchParams.get('show')) {
+    if (this.state.show) {
       self.showConversation();
     }
   };
@@ -259,7 +261,7 @@ class App extends Component {
           position: 'relative',
           left: this.state.openConversation ? '0' : '540px',
           overflow: 'hidden',
-          borderLeft: '1px solid #EEE',
+          border: this.state.show ? '1px solid #EEE' : 'none',
           flexDirection: 'column',
           display: this.state.openConversation ? 'flex' : 'none',
         })}>
@@ -268,7 +270,7 @@ class App extends Component {
               <img src={this.state.organization_picture} />
               <p>{this.state.organization_name ? `Hey ${this.state.organization_name}!` : 'Your Local Gov Chatbot!'}</p>
             </div>
-            <img src="close.svg" onClick={() => this.hideConversation()} />
+            {!this.state.show && <img src="close.svg" onClick={() => this.hideConversation()} />}
           </ContainerHeader>
           <ContainerContent>
             <ContainerMessages>
@@ -302,7 +304,7 @@ class App extends Component {
               organizationName={this.state.organization_name}
               submit={this.submit.bind(this)}
             />
-            {this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar href={`https://m.me/${entry.facebook_entry_id}`} target="_blank" rel="noopener noreferrer">
+            {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar href={`https://m.me/${entry.facebook_entry_id}`} target="_blank" rel="noopener noreferrer">
               Always forget it's trash night? <u>Get Reminders →</u>
             </HelloBar>)}
           </ContainerContent>

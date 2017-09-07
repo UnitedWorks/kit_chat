@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import update from 'react-addons-update';
 import styled from 'styled-components';
+import MessengerPlugin from 'react-messenger-plugin';
 
 import Message from './Message';
 import Input from './Input';
@@ -55,7 +56,7 @@ const ContainerHeader = styled.div`
   }
 `;
 
-const HelloBar = styled.a`
+const HelloBar = styled.div`
   background: #0084ff;
   padding: 12px 24px 10px;
   color: #FFF;
@@ -304,8 +305,13 @@ class App extends Component {
               organizationName={this.state.organization_name}
               submit={this.submit.bind(this)}
             />
-            {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar href={`https://m.me/${entry.facebook_entry_id}`} target="_blank" rel="noopener noreferrer">
+            {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar>
               Always forget it's trash night? <u>Get Reminders →</u>
+              <MessengerPlugin
+                appId="343312956038024"
+                pageId="464325157245887"
+                color="white"
+              />
             </HelloBar>)}
           </ContainerContent>
         </div>

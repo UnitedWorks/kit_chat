@@ -122,9 +122,13 @@ class App extends Component {
     window.addEventListener('message', function(e) {
       if (e.data === 'init') self.source = e.source;
     });
+
+    window.speechSynthesis.onvoiceschanged = function() {
+      self.voices = window.speechSynthesis.getVoices();
+    }
   };
 
-  BASE_URL = process.env.NODE_ENV === 'production' ? 'https://api.kit.community' : 'http://127.0.0.1:5000';
+  BASE_URL = process.env.NODE_ENV !== 'production' ? 'https://api.kit.community' : 'http://127.0.0.1:5000';
   state = {
     messages: [],
     currentQuickActions: [],
@@ -158,6 +162,10 @@ class App extends Component {
     if (this.state.constituent_id === null) {
       self.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
     }
+
+    if (!!new URL(window.location.href).searchParams.get('show')) {
+      self.showConversation();
+    }
   };
 
   /* An awful hack for now */
@@ -167,12 +175,12 @@ class App extends Component {
 
   showConversation() {
     this.setState({ ...this.state, openConversation: true });
-    this.source.postMessage('show', '*');
+    this.source && this.source.postMessage('show', '*');
   }
 
   hideConversation() {
     this.setState({ ...this.state, openConversation: false });
-    this.source.postMessage('hide', '*');
+    this.source && this.source.postMessage('hide', '*');
   }
 
   submit(value) {
@@ -214,6 +222,15 @@ class App extends Component {
     this.setState(newData);
     const elem = ReactDOM.findDOMNode(this.refs.scrollToSpan);
     if (elem) elem.scrollIntoView(false);
+
+    let tts = new URL(window.location.href).searchParams.get('tts');
+
+    if (tts && !message.local && typeof message.content === 'string') {
+      let utterance = new SpeechSynthesisUtterance( message.content );
+      utterance.voice = window.speechSynthesis.getVoices()[ 3 ];
+      utterance.pitch = 1;
+      window.speechSynthesis.speak( utterance );
+    }
   };
 
   post(payload) {

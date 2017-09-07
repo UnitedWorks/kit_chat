@@ -63,6 +63,15 @@ const HelloBar = styled.div`
   font-size: 12px;
   text-decoration: none;
   text-align: center;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+  div {
+    position: relative;
+    top: 1px;
+    margin-left: 4px;
+  }
 `;
 
 const ContainerContent = styled.div`
@@ -306,11 +315,12 @@ class App extends Component {
               submit={this.submit.bind(this)}
             />
             {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar>
-              Always forget it's trash night? <u>Get Reminders →</u>
+              <p>Always forget it's trash night? <u>Enable Reminders →</u></p>
               <MessengerPlugin
                 appId="343312956038024"
                 pageId="464325157245887"
                 color="white"
+                type="message-us"
               />
             </HelloBar>)}
           </ContainerContent>

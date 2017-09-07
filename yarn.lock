@@ -4994,6 +4994,10 @@ react-addons-update@^15.5.2:
     fbjs "^0.8.9"
     object-assign "^4.1.0"
 
+react-async-script@0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-async-script/-/react-async-script-0.6.0.tgz#b37513d62f25a7fc71b5a4586c389c38f1904853"
+
 react-dev-utils@^3.0.0, react-dev-utils@^3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-3.1.1.tgz#09ae7209a81384248db56547e718e65bd3b20eb5"
@@ -5037,6 +5041,12 @@ react-error-overlay@^1.0.7:
     react-dev-utils "^3.1.0"
     settle-promise "1.0.0"
     source-map "0.5.6"
+
+react-messenger-plugin@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-messenger-plugin/-/react-messenger-plugin-1.0.3.tgz#348ef4ffd711b059130897a176500c9f4c4ebc46"
+  dependencies:
+    react-async-script "0.6.0"
 
 react-scripts@1.0.7:
   version "1.0.7"

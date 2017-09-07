@@ -68,8 +68,6 @@ const HelloBar = styled.div`
   align-items: center;
   min-height: 48px;
   div {
-    position: relative;
-    top: 1px;
     margin-left: 4px;
   }
 `;
@@ -138,7 +136,7 @@ class App extends Component {
     }
   };
 
-  BASE_URL = process.env.NODE_ENV !== 'production' ? 'https://api.kit.community' : 'http://127.0.0.1:5000';
+  BASE_URL = process.env.NODE_ENV === 'production' ? 'https://api.kit.community' : 'http://127.0.0.1:5000';
   state = {
     messages: [],
     currentQuickActions: [],
@@ -315,10 +313,10 @@ class App extends Component {
               submit={this.submit.bind(this)}
             />
             {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar>
-              <p>Always forget it's trash night? <u>Enable Reminders →</u></p>
+              <p><u>Forget trash night? Get Alerts →</u></p>
               <MessengerPlugin
                 appId="343312956038024"
-                pageId="464325157245887"
+                pageId={entry.facebook_entry_id}
                 color="white"
                 type="message-us"
               />

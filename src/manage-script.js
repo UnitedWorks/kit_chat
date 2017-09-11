@@ -29,7 +29,7 @@
         frame.style.right = '0';
         frame.style.left = 'auto';
         frame.style.overflow = 'visible';
-        frame.style.boxShadow = '0px 0px 4px 1px #DDD';
+        frame.style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 0px 4px 1px';
       } else if (e.data === 'hide') {
         frame.style.height = '72px';
         frame.style.maxHeight = 'initial';

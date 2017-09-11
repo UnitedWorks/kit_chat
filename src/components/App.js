@@ -269,7 +269,6 @@ class App extends Component {
           position: 'relative',
           left: this.state.openConversation ? '0' : '540px',
           overflow: 'hidden',
-          border: this.state.show ? '1px solid #EEE' : 'none',
           flexDirection: 'column',
           display: this.state.openConversation ? 'flex' : 'none',
         })}>

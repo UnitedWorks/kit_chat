@@ -29,6 +29,7 @@
         frame.style.right = '0';
         frame.style.left = 'auto';
         frame.style.overflow = 'visible';
+        frame.style.boxShadow = '0px 0px 4px 1px #DDD';
       } else if (e.data === 'hide') {
         frame.style.height = '72px';
         frame.style.maxHeight = 'initial';
@@ -38,6 +39,7 @@
         frame.style.right = '24px';
         frame.style.left = 'initial';
         frame.style.overflow = 'hidden';
+        frame.style.boxShadow = 'none';
       }
     });
   }

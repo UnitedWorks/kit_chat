@@ -3,12 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "localforage": "^1.5.0",
     "react": "^15.5.4",
     "react-addons-update": "^15.5.2",
     "react-dom": "^15.5.4",
     "react-messenger-plugin": "^1.0.3",
-    "redux-persist": "^4.8.2",
     "styled-components": "^2.1.2"
   },
   "devDependencies": {

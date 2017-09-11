@@ -21,6 +21,10 @@ const Message = styled.div`
     border-radius: 20px;
     background: #F8F8F8;
   }
+  img {
+    border-radius: 4px;
+    margin: 4px 10px;
+  }
   ${props => {
     if (props.localMessage) {
       return css`
@@ -183,7 +187,6 @@ class MessageComponent extends Component {
           </Message>
         );
       },
-
       template() {
         return {
           generic() {
@@ -253,7 +256,22 @@ class MessageComponent extends Component {
             );
           }
         }[message.content.templateType || 'generic']();
-      }
+      },
+      file() {
+        return (
+          <Message newSender={self.props.newSender} localMessage={message.local}>
+            {self.props.newSender && <span className="sender">{message.local ? 'You' : (`${self.props.organization.name} Bot` || 'Gov Bot')}</span>}
+            <div>File: <a href={message.content.url} target="_blank" rel="noopener noreferrer">{message.content.name}</a></div>
+          </Message>
+        );
+      },
+      image() {
+        return (
+          <Message newSender={self.props.newSender}>
+            <img src={message.content.url} />
+          </Message>
+        );
+      },
     }[(message.content && message.content.type) || 'message']();
   };
 
@@ -261,11 +279,11 @@ class MessageComponent extends Component {
     let self = this;
     if (button.type === 'postback') {
       return <a key={index} onClick={self.props.templateButton.bind(self, button)}>{button.title}</a>;
-    } else if (button.type === "phone_number") {
+    } else if (button.type === 'phone_number') {
       return <a key={index} href={`tel:${button.payload}`}>Call: {button.title}</a>;
-    } else if (button.type === "email") {
+    } else if (button.type === 'email') {
       return <a key={index} href={`mailto:${button.email}`}>Email: {button.title}</a>;
-    } else if (button.type === "web_url") {
+    } else if (button.type === 'web_url') {
       return <a key={index} href={button.url} target="_blank" rel="noopener noreferrer">Website: {button.title.length > 32 ? `${button.title.substr(0, 32)}...` : button.title}</a>;
     }
   }

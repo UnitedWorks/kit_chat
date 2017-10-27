@@ -3,7 +3,7 @@
   var body = document.querySelector('body'), frameWrapper = document.createElement('div');
   frameWrapper.id = 'hey-mayor-widget'; frameWrapper.style.zIndex = 2147483647; frameWrapper.style.position = 'absolute';
   var frame = document.createElement('iframe');
-  frame.src = 'https://chat.kit.community?organization_id=' + org_id;
+  frame.src = 'https://chat.kit.community?organization_id=' + org_id + '&dt=' + Date.now();
   frame.id = 'hey-mayor-widget';
   frame.style.display = 'block';
   frame.style.position = 'fixed';

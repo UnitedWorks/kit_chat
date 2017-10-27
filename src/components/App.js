@@ -58,7 +58,7 @@ const ContainerHeader = styled.div`
 
 const HelloBar = styled.div`
   background: #0084ff;
-  padding: 12px 24px 10px;
+  padding: 10px 24px 9px;
   color: #FFF;
   font-size: 12px;
   text-decoration: none;
@@ -66,7 +66,6 @@ const HelloBar = styled.div`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  min-height: 48px;
   div {
     margin-right: 2px;
     margin-bottom: 1px;

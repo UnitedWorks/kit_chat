@@ -68,7 +68,8 @@ const HelloBar = styled.div`
   align-items: center;
   min-height: 48px;
   div {
-    margin-left: 4px;
+    margin-right: 2px;
+    margin-bottom: 1px;
   }
 `;
 
@@ -85,6 +86,7 @@ const ContainerMessages = styled.div`
   flex-flow: column;
   overflow-y: scroll;
   padding: 24px 0;
+  height: 100vh;
   span {
     margin: 2px 5px;
   }
@@ -243,6 +245,13 @@ class App extends Component {
     }
   };
 
+  clearLogs() {
+    this.setState({
+      ...this.state,
+      messages: [],
+    });
+  }
+
   post(payload) {
     const self = this;
     fetch(`${this.BASE_URL}/conversations/webhook/http` +
@@ -272,12 +281,23 @@ class App extends Component {
           flexDirection: 'column',
           display: this.state.openConversation ? 'flex' : 'none',
         })}>
+          {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar>
+            <MessengerPlugin
+              appId="343312956038024"
+              pageId={entry.facebook_entry_id}
+              color="white"
+              type="message-us"
+            />
+            <p>for Reminders & Alerts</p>
+          </HelloBar>)}
           <ContainerHeader>
             <div>
-              <img src={this.state.organization_picture} />
-              <p>{this.state.organization_name ? `Hey ${this.state.organization_name}!` : 'Your Local Gov Chatbot!'}</p>
+              <p>{this.state.organization_name ? `${this.state.organization_name} Chatbot` : 'Your Local Gov Chatbot'}<sup style={({ fontSize: '8px', padding: '4px' })}>BETA</sup></p>
             </div>
-            {!this.state.show && <img src="close.svg" onClick={() => this.hideConversation()} />}
+            <div>
+              <img src="reset.svg" onClick={() => this.clearLogs()} />
+              {!this.state.show && <img src="close.svg" onClick={() => this.hideConversation()} />}
+            </div>
           </ContainerHeader>
           <ContainerContent>
             <ContainerMessages>
@@ -297,8 +317,8 @@ class App extends Component {
               {(this.state.messages.length > 0 && !this.state.messages[this.state.messages.length - 1].local) && this.state.currentQuickActions && this.state.currentQuickActions.length > 0 && <QuickReplies numReplies={this.state.currentQuickActions.length}>
                 <div>
                   {
-                    this.state.currentQuickActions.map(
-                      (a, i)=>(
+                    this.state.currentQuickActions.filter(a => a.title).map(
+                      (a, i) => (
                         <a key={i} href="#" onClick={ this.handleAction.bind(this, a) }>{a.title}</a>
                       )
                     )
@@ -311,15 +331,6 @@ class App extends Component {
               organizationName={this.state.organization_name}
               submit={this.submit.bind(this)}
             />
-            {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar>
-              <p><u>Forget trash night? Get Alerts →</u></p>
-              <MessengerPlugin
-                appId="343312956038024"
-                pageId={entry.facebook_entry_id}
-                color="white"
-                type="message-us"
-              />
-            </HelloBar>)}
           </ContainerContent>
         </div>
         <div style={({
@@ -340,15 +351,15 @@ class App extends Component {
         })} onClick={() => this.showConversation()}>
           <div style={({
             position: 'absolute',
-            top: '-3px',
-            right: '-3px',
-            width: '22px',
-            height: '22px',
+            top: '-1px',
+            right: '-1px',
+            width: '23px',
+            height: '23px',
             borderRadius: '50%',
-            background: '#F11F58',
+            background: '#2F3099',
             objectFit: 'scale-down',
             boxShadow: '0 1px 2px rgba(0, 0, 50, 0.6)',
-            padding: '7px 4px 4px',
+            padding: '3px',
             fontSize: '9px',
             fontWeight: '500',
             display: this.state.openConversation ? 'none' : 'flex',
@@ -356,11 +367,11 @@ class App extends Component {
             alignItems: 'center',
             color: '#FFF',
           })}>
-            {this.state.messages.length}
+            <img src="charge.svg" style={({ height: '100%', width: '100%' })}/>
           </div>
           <img src="convo.svg" style={({
-              height: this.state.openConversation ? '0px' : '100%',
-              width: this.state.openConversation ? '0px' : '100%',
+            height: this.state.openConversation ? '0px' : '100%',
+            width: this.state.openConversation ? '0px' : '100%',
           })} />
         </div>
       </Wrapper>

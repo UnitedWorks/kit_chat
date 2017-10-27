@@ -94,7 +94,7 @@ const ContainerMessages = styled.div`
 const QuickReplies = styled.div`
   padding: 12px 24px 0;
   overflow-x: scroll;
-  min-height: 50px;
+  min-height: 58px;
   &::-webkit-scrollbar {
     display: none;
   }

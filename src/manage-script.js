@@ -41,7 +41,7 @@
         frame.style.overflow = 'hidden';
         frame.style.boxShadow = 'none';
       } else if (e.data === 'hint') {
-        frame.style.height = '210px';
+        frame.style.height = '220px';
         frame.style.width = '280px';
       }
     });

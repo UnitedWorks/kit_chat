@@ -31,15 +31,18 @@
         frame.style.overflow = 'visible';
         frame.style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 0px 4px 1px';
       } else if (e.data === 'hide') {
-        frame.style.height = '72px';
+        frame.style.height = '68px';
         frame.style.maxHeight = 'initial';
-        frame.style.width = '72px';
+        frame.style.width = '68px';
         frame.style.top = 'initial';
         frame.style.bottom = '24px';
         frame.style.right = '24px';
         frame.style.left = 'initial';
         frame.style.overflow = 'hidden';
         frame.style.boxShadow = 'none';
+      } else if (e.data === 'hint') {
+        frame.style.height = '210px';
+        frame.style.width = '280px';
       }
     });
   }

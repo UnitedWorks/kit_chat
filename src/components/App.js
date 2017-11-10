@@ -22,7 +22,7 @@ const ContainerHeader = styled.div`
   display: inline-flex;
   width: 100%;
   z-index: 100;
-  max-height: 64px;
+  max-height: 58px;
   background: #FFF;
   padding: 32px 20px;
   justify-content: space-between;
@@ -126,13 +126,24 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = JSON.parse(localStorage.getItem('state')) || this.state;
+    // Force a default
+    this.state.hinting = false;
     // Grab Parent Window
     const self = this;
-    window.addEventListener('message', function(e) {
-      if (e.data === 'init') self.source = e.source;
+    window.addEventListener('message', (e) => {
+      if (e.data === 'init') {
+        self.source = e.source;
+        self.setState({ ...self.state, hinting: false });
+        setTimeout(() => {
+          if (!this.state.openConversation) {
+            self.source && self.source.postMessage('hint', '*');
+            self.setState({ ...self.state, hinting: true });
+          }
+        }, 2500);
+      }
     });
 
-    window.speechSynthesis.onvoiceschanged = function() {
+    window.speechSynthesis.onvoiceschanged = () => {
       self.voices = window.speechSynthesis.getVoices();
     }
   };
@@ -147,6 +158,7 @@ class App extends Component {
     openConversation: false,
     show: false,
     tts: false,
+    hinting: false,
   };
 
   componentWillMount() {
@@ -190,7 +202,12 @@ class App extends Component {
   }
 
   hideConversation() {
-    this.setState({ ...this.state, openConversation: false });
+    this.setState({ ...this.state, openConversation: false, hinting: false });
+    this.source && this.source.postMessage('hide', '*');
+  }
+
+  hideHint() {
+    this.setState({ ...this.state, hinting: false });
     this.source && this.source.postMessage('hide', '*');
   }
 
@@ -332,12 +349,52 @@ class App extends Component {
             />
           </ContainerContent>
         </div>
+        {this.state.hinting && !this.state.openConversation && <div style={({
+          background: '#FFF',
+          borderRadius: '4px',
+          margin: '12px',
+          boxShadow: '0 1px 8px rgba(0, 0, 50, 0.05)',
+          fontSize: '13px',
+          textAlign: 'left',
+          color: '#6e7a89',
+          cursor: 'pointer',
+        })} onClick={() => this.showConversation()}>
+          <div style={({
+            position: 'absolute',
+            top: '1px',
+            right: '1px',
+            width: '24px',
+            height: '24px',
+            borderRadius: '50%',
+            background: '#5d6c80',
+            objectFit: 'scale-down',
+            boxShadow: '0 1px 2px rgba(0, 0, 50, 0.6)',
+            padding: '7px',
+            justifyContent: 'center',
+            alignItems: 'center',
+          })} onClick={() => this.hideHint()}>
+            <img src="close-white.svg" style={({ height: '100%', width: '100%' })}/>
+          </div>
+          <div style={({
+            fontSize: '10px',
+            padding: '20px 20px 5px',
+          })}>
+            <span style={({ fontWeight: '500', color: '#263238' })}>Chatbot</span><span> for {this.state.organization_name}</span>
+          </div>
+          <div style={({
+            padding: '5px 20px 25px',
+            lineHeight: '150%',
+          })}>
+            <p style={({ marginBottom: '6px' })}>Looking for something? I can help you find it.</p>
+            <p>Ask me anything about Jersey City!</p>
+          </div>
+        </div>}
         <div style={({
           position: 'fixed',
           bottom: '4px',
           right: '4px',
-          height: this.state.openConversation ? '0px' : '64px',
-          width: this.state.openConversation ? '0px' : '64px',
+          height: this.state.openConversation ? '0px' : '58px',
+          width: this.state.openConversation ? '0px' : '58px',
           background: '#3C3EFF',
           borderRadius: '50%',
           boxShadow: '0 1px 6px rgba(0, 0, 50, 0.5)',
@@ -352,8 +409,8 @@ class App extends Component {
             position: 'absolute',
             top: '-1px',
             right: '-1px',
-            width: '23px',
-            height: '23px',
+            width: '20px',
+            height: '20px',
             borderRadius: '50%',
             background: '#2F3099',
             objectFit: 'scale-down',

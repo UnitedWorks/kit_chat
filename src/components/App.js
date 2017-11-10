@@ -139,7 +139,7 @@ class App extends Component {
             self.source && self.source.postMessage('hint', '*');
             self.setState({ ...self.state, hinting: true });
           }
-        }, 2500);
+        }, 15000);
       }
     });
 

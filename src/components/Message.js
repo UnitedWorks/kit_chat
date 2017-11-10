@@ -12,14 +12,17 @@ const Message = styled.div`
   margin: 2px 20px;
   span {
     font-size: 11px;
-    padding: 5px 10px;
+    padding: 5px;
     color: #9A9A9A;
   }
   div {
     font-size: 15px;
     padding: 12px 12px 10px;
     border-radius: 20px;
-    background: #F8F8F8;
+    background: #FAFAFA;
+    color: #4e5a69;
+    line-height: 140%;
+    min-width: 40px;
   }
   img {
     border-radius: 4px;
@@ -43,6 +46,7 @@ const TemplateBase = styled.div`
   display: flex;
   margin: 8px 0;
   max-height: 480px;
+  color: #4e5a69;
   .card {
     display: flex;
     border-radius: 3px;

@@ -24,7 +24,7 @@ const ContainerHeader = styled.div`
   z-index: 100;
   max-height: 58px;
   background: #FFF;
-  padding: 32px 20px;
+  padding: 24px 20px;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #EEE;
@@ -48,7 +48,8 @@ const ContainerHeader = styled.div`
     height: 20px;
     width: auto;
     cursor: pointer;
-    margin: 8px;
+    margin: 24px;
+    margin-right: 0;
     opacity: 0.5;
     &:hover {
       opacity: 1;
@@ -87,7 +88,7 @@ const ContainerMessages = styled.div`
   padding: 24px 0;
   height: 100vh;
   span {
-    margin: 2px 5px;
+    margin: 2px 0;
   }
 `;
 

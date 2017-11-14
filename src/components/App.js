@@ -58,19 +58,21 @@ const ContainerHeader = styled.div`
 `;
 
 const HelloBar = styled.div`
+  display: inline-flex;
   background: #0084ff;
   padding: 10px 24px 9px;
   color: #FFF;
   font-size: 12px;
   text-decoration: none;
   text-align: center;
-  display: inline-flex;
   justify-content: center;
   align-items: center;
   div {
     margin-right: 2px;
     margin-bottom: 1px;
   }
+  ${props => props.show ? '' : 'position: absolute;'}
+  ${props => props.show ? '' : 'top: -500px;'}
 `;
 
 const ContainerContent = styled.div`
@@ -160,6 +162,7 @@ class App extends Component {
     show: false,
     tts: false,
     hinting: false,
+    showHelloBar: false,
   };
 
   componentWillMount() {
@@ -243,11 +246,28 @@ class App extends Component {
   };
 
   pushMessage(message) {
-    const newData = update(this.state, {
-      messages: {
-        $push: [message],
-      }
-    });
+    const mentionsNotifications = typeof message.content === 'string' && (message.content.toLowerCase().includes('notification') || message.content.toLowerCase().includes('reminder'));
+    let newData = null;
+    // We should support web notifications via service worker, but we don't have a mechanism for pushing?
+    if (mentionsNotifications) {
+      newData = update(this.state, {
+        messages: {
+          $push: message.local ? [message] : [{
+            content: "Reminders and alerts are available through Facebook Messenger. Click below to message us there!",
+          }],
+        },
+        showHelloBar: { $set: true },
+      });
+    } else {
+      newData = update(this.state, {
+        messages: {
+          $push: [message],
+        },
+        showHelloBar: {
+          $set: false,
+        },
+      });
+    }
     this.setState(newData);
     const elem = ReactDOM.findDOMNode(this.refs.scrollToSpan);
     if (elem) elem.scrollIntoView(false);
@@ -298,15 +318,6 @@ class App extends Component {
           flexDirection: 'column',
           display: this.state.openConversation ? 'flex' : 'none',
         })}>
-          {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar>
-            <MessengerPlugin
-              appId="343312956038024"
-              pageId={entry.facebook_entry_id}
-              color="white"
-              type="message-us"
-            />
-            <p>for Reminders & Alerts</p>
-          </HelloBar>)}
           <ContainerHeader>
             <div>
               <p>{this.state.organization_name ? `${this.state.organization_name} Chatbot` : 'Your Local Gov Chatbot'}<sup style={({ fontSize: '8px', padding: '4px' })}>BETA</sup></p>
@@ -344,6 +355,15 @@ class App extends Component {
               </QuickReplies>}
               <span ref="scrollToSpan"></span>
             </ContainerMessages>
+            {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar show={this.state.showHelloBar}>
+              <MessengerPlugin
+                appId="343312956038024"
+                pageId={entry.facebook_entry_id}
+                color="white"
+                type="message-us"
+              />
+              <p>for Reminders & Alerts</p>
+            </HelloBar>)}
             <Input
               organizationName={this.state.organization_name}
               submit={this.submit.bind(this)}

@@ -209,7 +209,7 @@ class MessageComponent extends Component {
                         </div>
                       </div>
                       <div className="buttons">
-                        {element.buttons.map(self.buttonTemplate.bind(self))}
+                        {element.buttons && element.buttons.map(self.buttonTemplate.bind(self))}
                       </div>
                     </div>;
                   })

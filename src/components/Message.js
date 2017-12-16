@@ -1,3 +1,4 @@
+import Autolinker from 'autolinker';
 import React, { Component } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -186,8 +187,8 @@ class MessageComponent extends Component {
       message() {
         return (
           <Message newSender={self.props.newSender} localMessage={message.local}>
-            {self.props.newSender && <span className="sender">{message.local ? 'You' : (`${self.props.organization.name} Bot` || 'Gov Bot')}</span>}
-            <div>{message.content}</div>
+            {self.props.newSender && !message.local && <span className="sender">{`${self.props.organization.name} Bot` || 'Gov Bot'}</span>}
+            <div dangerouslySetInnerHTML={{ __html: Autolinker.link(message.content) }}></div>
           </Message>
         );
       },

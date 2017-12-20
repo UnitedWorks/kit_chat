@@ -54,6 +54,9 @@ const TemplateBase = styled.div`
   }
   .card .info {
     padding: 14px;
+    h4 {
+      font-size: 15px;
+    }
     h4, h5 {
       margin-bottom: 4px;
     }

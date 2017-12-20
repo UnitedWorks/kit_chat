@@ -72,6 +72,8 @@ const ContainerHeader = styled.div`
     align-items: center;
     p {
       padding-top: 4px;
+      font-size: 18px;
+      font-weight: 500;
     }
     img {
       height: 32px;

@@ -282,7 +282,7 @@ class MessageComponent extends Component {
     } else if (button.type === 'email') {
       return <a key={index} href={`mailto:${button.email}`}>Email: {button.title}</a>;
     } else if (button.type === 'web_url') {
-      return <a key={index} href={button.url} target="_blank" rel="noopener noreferrer">Website: {button.title.length > 32 ? `${button.title.substr(0, 32)}...` : button.title}</a>;
+      return <a key={index} href={button.url} target="_blank" rel="noopener noreferrer">{button.title.length > 32 ? `${button.title.substr(0, 32)}...` : button.title}</a>;
     }
   }
 }

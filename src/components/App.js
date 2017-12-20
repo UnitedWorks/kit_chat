@@ -17,7 +17,7 @@ const Wrapper = styled.div`
   ${props => {
     if (!props.hinting) {
       return css`
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 7px 36px rgba(0, 0, 40, 0.25);
         margin: 32px;
       `;
     }
@@ -30,7 +30,7 @@ const Wrapper = styled.div`
       `;
     } else if (props.isMobile) {
       return css`
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 7px 36px rgba(0, 0, 40, 0.25);
         margin: 0;
         max-height: 100vh;
       `;

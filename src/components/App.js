@@ -36,6 +36,23 @@ const Wrapper = styled.div`
       `;
     }
   }}
+  ${props => {
+    console.log(props)
+    if (props.showParam) {
+      return css`
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-height: 100vh;
+        max-width: 100vw;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+      `;
+    }
+  }}
 `;
 
 const ContainerHeader = styled.div`
@@ -93,8 +110,7 @@ const HelloBar = styled.div`
     margin-right: 2px;
     margin-bottom: 1px;
   }
-  ${props => props.show ? '' : 'position: absolute;'}
-  ${props => props.show ? '' : 'top: -500px;'}
+  ${props => props.show ? '' : 'display: none;'}
 `;
 
 const ContainerContent = styled.div`
@@ -340,7 +356,7 @@ class App extends Component {
     });
     // Return Element
     return (
-      <Wrapper hinting={this.state.hinting && !this.state.openConversation} isMobile={this.state.isMobile}>
+      <Wrapper hinting={this.state.hinting && !this.state.openConversation} isMobile={this.state.isMobile} showParam={this.state.show}>
         <div style={({
           position: 'relative',
           left: this.state.openConversation ? '0' : '540px',

@@ -6,9 +6,6 @@ const Section = styled.div`
   width: 100%;
   min-height: 80px;
   border-top: 1px solid #EEE;
-  &:hover {
-    border-top: 1px solid #3C3EFF;
-  }
   input {
     width: 100%;
     padding: 20px 20px 20px 24px;
@@ -18,7 +15,7 @@ const Section = styled.div`
     font-size: 17px;
     font-weight: 300;
     &::placeholder {
-      color: #9A9A9A;
+      color: #AAA;
     }
   }
   span {

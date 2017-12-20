@@ -23,13 +23,12 @@
       if (e.data === 'show') {
         frame.style.height = '100%';
         frame.style.maxHeight = '100vh';
-        frame.style.width = '540px';
+        frame.style.width = (window.innerWidth < 480 ? '100%' : '540px');
         frame.style.top = '0';
         frame.style.bottom = '0';
         frame.style.right = '0';
-        frame.style.left = 'auto';
+        frame.style.left = (window.innerWidth < 480 ? '0' : 'auto');
         frame.style.overflow = 'visible';
-        frame.style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 0px 4px 1px';
       } else if (e.data === 'hide') {
         frame.style.height = '68px';
         frame.style.maxHeight = 'initial';
@@ -45,5 +44,18 @@
         frame.style.width = '280px';
       }
     });
+    var isMobileFlag = window.innerWidth < 480;
+    if (isMobileFlag) {
+      frame.contentWindow.postMessage('isMobile', '*');
+    }
+    window.onresize = function(e) {
+      if (window.innerWidth < 480 && !isMobileFlag) {
+        frame.contentWindow.postMessage('isMobile', '*');
+        isMobileFlag = true;
+      } else if (window.innerWidth >= 480 && isMobileFlag) {
+        frame.contentWindow.postMessage('isNotMobile', '*');
+        isMobileFlag = false;
+      }
+    }
   }
 })();

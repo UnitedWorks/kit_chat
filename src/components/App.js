@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import update from 'react-addons-update';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import MessengerPlugin from 'react-messenger-plugin';
 
 import Message from './Message';
@@ -10,12 +10,32 @@ import Input from './Input';
 const Wrapper = styled.div`
   display: flex;
   flex-flow: column;
-  max-height: 100vh;
+  max-height: 90vh;
   height: 100%;
-  width: 100%;
   max-width: 800px;
-  margin: 0px auto;
   overflow: hidden;
+  ${props => {
+    if (!props.hinting) {
+      return css`
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        margin: 32px;
+      `;
+    }
+  }}
+  ${props => {
+    if (!props.isMobile && !props.hinting) {
+      return css`
+        border-radius: 12px;
+        border-bottom: 2px solid #3C3EFF;
+      `;
+    } else if (props.isMobile) {
+      return css`
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        margin: 0;
+        max-height: 100vh;
+      `;
+    }
+  }}
 `;
 
 const ContainerHeader = styled.div`
@@ -59,9 +79,11 @@ const ContainerHeader = styled.div`
 
 const HelloBar = styled.div`
   display: inline-flex;
-  background: #0084ff;
+  background: #FFF;
+  border-top: 1px solid #EEE;
+  color: #0084ff;
+  font-weight: 300;
   padding: 10px 24px 9px;
-  color: #FFF;
   font-size: 12px;
   text-decoration: none;
   text-align: center;
@@ -81,13 +103,13 @@ const ContainerContent = styled.div`
   flex-flow: column;
   overflow-y: auto;
   background: #FFF;
+  border-radius: 0 0 8px 8px;
 `;
 
 const ContainerMessages = styled.div`
   display: flex;
   flex-flow: column;
   overflow-y: scroll;
-  padding: 24px 0;
   height: 100vh;
   span {
     margin: 2px 0;
@@ -102,22 +124,25 @@ const QuickReplies = styled.div`
     display: none;
   }
   div {
+    display: flex;
+    justify-content: flex-end;
     height: 100%;
-    width: ${props => props.numReplies ? `${props.numReplies * 160}px` : '0px'};
+    width: 100%;
     overflow-y: hidden;
     overflow-x: scroll;
   }
   div > a {
+    vertical-align: middle;
     color: #3C3EFF;
     background: transparent;
     cursor: pointer;
     list-style: none;
     display: inline-block;
     margin: 0;
-    margin-right: 5px;
-    padding: 12px 14px 8px;
+    margin-left: 8px;
+    padding: 8px 14px;
     text-decoration: none;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 300;
     border: 1px solid #3C3EFF;
     border-radius: 100px;
@@ -131,6 +156,7 @@ class App extends Component {
     this.state = JSON.parse(localStorage.getItem('state')) || this.state;
     // Force a default
     this.state.hinting = false;
+    this.state.isMobile = false;
     // Grab Parent Window
     const self = this;
     window.addEventListener('message', (e) => {
@@ -143,6 +169,10 @@ class App extends Component {
             self.setState({ ...self.state, hinting: true });
           }
         }, 15000);
+      } else if (e.data === 'isMobile') {
+        self.setState({ ...self.state, isMobile: true });
+      } else if (e.data === 'isNotMobile') {
+        self.setState({ ...self.state, isMobile: false });
       }
     });
 
@@ -225,7 +255,7 @@ class App extends Component {
       self.pushMessage(m);
       this.setState(update(self.state, {
         currentQuickActions: {
-          $set: m.quickActions || [],
+          $set: m.quickActions ? m.quickActions.filter(a => a.title && a.title.indexOf('Turn O') === -1) : [], // Filter notification related quick replies
         }
       }));
     });
@@ -253,7 +283,7 @@ class App extends Component {
       newData = update(this.state, {
         messages: {
           $push: message.local ? [message] : [{
-            content: "Reminders and alerts are available through Facebook Messenger. Click below to message us there!",
+            content: "Service reminders and alerts are available via Facebook Messenger",
           }],
         },
         showHelloBar: { $set: true },
@@ -310,7 +340,7 @@ class App extends Component {
     });
     // Return Element
     return (
-      <Wrapper>
+      <Wrapper hinting={this.state.hinting && !this.state.openConversation} isMobile={this.state.isMobile}>
         <div style={({
           position: 'relative',
           left: this.state.openConversation ? '0' : '540px',
@@ -330,7 +360,7 @@ class App extends Component {
           <ContainerContent>
             <ContainerMessages>
               {
-                this.state.messages.map((a, i, arr) => (
+                this.state.messages.slice(-50).map((a, i, arr) => (
                   <Message
                     key={i}
                     message={a}
@@ -353,7 +383,7 @@ class App extends Component {
                   }
                 </div>
               </QuickReplies>}
-              <span ref="scrollToSpan"></span>
+              <span style={({ position: 'relative', top: '12px' })} ref="scrollToSpan"></span>
             </ContainerMessages>
             {!this.state.show && this.state.organization_entries && this.state.organization_entries.filter(e => e.facebook_entry_id).map(entry => <HelloBar show={this.state.showHelloBar}>
               <MessengerPlugin
@@ -362,7 +392,7 @@ class App extends Component {
                 color="white"
                 type="message-us"
               />
-              <p>for Reminders & Alerts</p>
+              <p>on Facebook Messenger</p>
             </HelloBar>)}
             <Input
               organizationName={this.state.organization_name}
@@ -424,7 +454,6 @@ class App extends Component {
           justifyContent: 'center',
           alignItems: 'center',
           padding: this.state.openConversation ? '0' : '15px',
-          transition: '150ms',
         })} onClick={() => this.showConversation()}>
           <div style={({
             position: 'absolute',

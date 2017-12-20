@@ -3,21 +3,20 @@ import React, { Component } from 'react';
 import styled, { css } from 'styled-components';
 
 const Message = styled.div`
-  ${props => props.newSender ? 'margin-top: 12px;' : 'margin-top: 2px;'}
+  ${props => props.newSender ? 'margin: 6px 20px;' : 'margin: 2px 20px;'}
   display: flex;
   flex-flow: column;
   align-self: flex-start;
   align-items: flex-start;
   flex-shrink: 0;
   position: relative;
-  margin: 2px 20px;
   span {
     font-size: 11px;
     padding: 5px;
     color: #9A9A9A;
   }
   div {
-    font-size: 15px;
+    font-size: 14px;
     padding: 12px 12px 10px;
     border-radius: 20px;
     background: #FAFAFA;
@@ -46,7 +45,6 @@ const Message = styled.div`
 const TemplateBase = styled.div`
   display: flex;
   margin: 8px 0;
-  max-height: 480px;
   color: #4e5a69;
   .card {
     display: flex;
@@ -54,13 +52,13 @@ const TemplateBase = styled.div`
     box-shadow: 0px 1px 4px #DDD;
   }
   .card .info {
-    padding: 16px;
+    padding: 14px;
     h4, h5 {
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
     p {
       font-size: 13px;
-      line-height: 125%;
+      line-height: 120%;
     }
   }
   .buttons {
@@ -88,55 +86,50 @@ const TemplateBase = styled.div`
 `;
 
 const TemplateGeneric = TemplateBase.extend`
-  flex-flow: row nowrap;
-  ${props => props.hasImages ? 'min-height: 420px;' : 'min-height: 210px;'}
+  display: block;
+  flex-direction: column;
   padding: 8px 0;
-  overflow-y: hidden;
-  overflow-x: scroll;
   &::-webkit-scrollbar {
     display: none;
   }
-  .card.image {
-    flex: 1 0 62%;
-    flex-flow: column;
-    justify-content: space-between;
-    min-width: 280px;
-    max-width: 350px;
-    min-height: 320px;
-    margin: 0px 5px;
+  .card {
+    display: flex;
+  }
+  .card.info {
+    padding: 14px 14px 4px;
+  }
+  .card.image, .card.imageless {
+    display: flex;
+    flex-direction: row;
+    margin: 6px 20px;
     border-radius: 6px;
     overflow: hidden;
-    &:first-of-type {
-      margin-left: 20px;
-    }
-    &:last-of-type {
-      margin-right: 20px;
-    }
     .body {
       display: flex;
       flex-direction: column;
-      .image-container {
-        height: 240px;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+      flex-grow: 2;
+      justify-content: center;
+    }
+    .buttons {
+      display: inline-block;
+      min-width: initial;
+      a {
+        text-align: left;
       }
     }
-  }
-  .card.imageless {
-    flex: 1 0 62%;
-    flex-flow: column;
-    justify-content: space-between;
-    min-height: 160px;
-    max-width: 350px;
-    margin: 0px 5px;
-    &:first-of-type {
-      margin-left: 20px;
+    .image-container {
+      flex-shrink: 1;
+      height: 120px;
+      img {
+        width: 80px;
+        height: 140px;
+        object-fit: cover;
+      }
     }
-    &:last-of-type {
-      margin-right: 20px;
+    @media (max-width: 480px) {
+      .image-container {
+        display: none;
+      }
     }
   }
 `;
@@ -200,17 +193,17 @@ class MessageComponent extends Component {
                 {
                   message.content.elements.map((element, index) => {
                     return <div key={index} className={element.image_url ? 'card image' : 'card imageless'}>
+                      {element.image_url && <div className="image-container">
+                        <img src={element.image_url} onError={(e) => (e.target.src = self.props.organization.picture || 'https://scontent.xx.fbcdn.net/v/t31.0-8/18589000_245329029282188_201697997574538644_o.png?oh=3c0896d62bc013dc7a520cd8aef2ec7d&oe=59B0D211')} />
+                      </div>}
                       <div className="body">
-                        {element.image_url && <div className="image-container">
-                          <img src={element.image_url} onError={(e) => (e.target.src = self.props.organization.picture || 'https://scontent.xx.fbcdn.net/v/t31.0-8/18589000_245329029282188_201697997574538644_o.png?oh=3c0896d62bc013dc7a520cd8aef2ec7d&oe=59B0D211')} />
-                        </div>}
                         <div className="info">
                           <h4>{element.title}</h4>
                           {element.subtitle ? <p>{element.subtitle.length > 128 ? `${element.subtitle.substr(0, 128)}...` : element.subtitle}</p> : ''}
                         </div>
-                      </div>
-                      <div className="buttons">
+                        <div className="buttons">
                         {element.buttons && element.buttons.map(self.buttonTemplate.bind(self))}
+                        </div>
                       </div>
                     </div>;
                   })

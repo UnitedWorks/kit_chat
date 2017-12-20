@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import update from 'react-addons-update';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import MessengerPlugin from 'react-messenger-plugin';
 
 import Message from './Message';
@@ -158,12 +158,46 @@ const QuickReplies = styled.div`
     display: inline-block;
     margin: 0;
     margin-left: 8px;
-    padding: 8px 14px;
+    padding: 8px 14px 8px;
     text-decoration: none;
     font-size: 14px;
     font-weight: 300;
     border: 1px solid #3C3EFF;
     border-radius: 100px;
+  }
+`;
+
+const fadeToggle = keyframes`
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
+`;
+
+const FakeTypingGIF = styled.div`
+  margin: 6px 20px;
+  width: 64px;
+  height: 28px;
+  min-height: 28px;
+  background: #FFF;
+  border-radius: 40px;
+  font-size: 40px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  span {
+    height: 6px;
+    width: 6px;
+    margin: 0 2px;
+    border-radius: 4px;
+    background: #3c3eff;
+    animation: 2s ${fadeToggle} ease-out both infinite;
   }
 `;
 
@@ -175,6 +209,7 @@ class App extends Component {
     // Force a default
     this.state.hinting = false;
     this.state.isMobile = false;
+    this.state.sent = false;
     // Grab Parent Window
     const self = this;
     window.addEventListener('message', (e) => {
@@ -186,7 +221,7 @@ class App extends Component {
             self.source && self.source.postMessage('hint', '*');
             self.setState({ ...self.state, hinting: true });
           }
-        }, 15000);
+        }, 10000);
       } else if (e.data === 'isMobile') {
         self.setState({ ...self.state, isMobile: true });
       } else if (e.data === 'isNotMobile') {
@@ -278,6 +313,7 @@ class App extends Component {
       }));
     });
     this.setState(update(this.state, {
+      sent: { $set: false },
       constituent_id: { $set: response.meta.constituent_id }
     }));
   };
@@ -288,9 +324,8 @@ class App extends Component {
   };
 
   send(message) {
-    const self = this;
-    self.pushMessage(message);
-    self.post({ type: 'message', payload: { text: message.content } });
+    this.pushMessage(message);
+    this.post({ type: 'message', payload: { text: message.content } });
   };
 
   pushMessage(message) {
@@ -301,19 +336,19 @@ class App extends Component {
       newData = update(this.state, {
         messages: {
           $push: message.local ? [message] : [{
-            content: "Service reminders and alerts are available via Facebook Messenger",
+            content: `${this.state.messages.length < 5 ? 'Hello! ' : 'I also can reminder you about scheduled services, events, and the weather via Facebook Messenger.'}`,
           }],
         },
         showHelloBar: { $set: true },
+        sent: { $set: message.local ? true : false },
       });
     } else {
       newData = update(this.state, {
         messages: {
           $push: [message],
         },
-        showHelloBar: {
-          $set: false,
-        },
+        showHelloBar: { $set: false },
+        sent: { $set: message.local ? true : false },
       });
     }
     this.setState(newData);
@@ -378,7 +413,7 @@ class App extends Component {
           <ContainerContent>
             <ContainerMessages>
               {
-                this.state.messages.slice(-50).map((a, i, arr) => (
+                this.state.messages.slice(-100).map((a, i, arr) => (
                   <Message
                     key={i}
                     message={a}
@@ -390,7 +425,8 @@ class App extends Component {
                     newSender={ !(arr[i - 1]) || (arr[i - 1].local !== a.local) }/>
                 ))
               }
-              {(this.state.messages.length > 0 && !this.state.messages[this.state.messages.length - 1].local) && this.state.currentQuickActions && this.state.currentQuickActions.length > 0 && <QuickReplies numReplies={this.state.currentQuickActions.length}>
+              {this.state.sent && <FakeTypingGIF><span /><span /><span /></FakeTypingGIF>}
+              {!this.state.sent && (this.state.messages.length > 0 && !this.state.messages[this.state.messages.length - 1].local) && this.state.currentQuickActions && this.state.currentQuickActions.length > 0 && <QuickReplies numReplies={this.state.currentQuickActions.length}>
                 <div>
                   {
                     this.state.currentQuickActions.filter(a => a.title).map(
@@ -448,14 +484,13 @@ class App extends Component {
             fontSize: '10px',
             padding: '20px 20px 5px',
           })}>
-            <span style={({ fontWeight: '500', color: '#263238' })}>Chatbot</span><span> for {this.state.organization_name}</span>
+            <span style={({ fontWeight: '500', color: '#263238' })}>{this.state.organization_name} Chatbot</span>
           </div>
           <div style={({
-            padding: '5px 20px 25px',
+            padding: '5px 20px 15px',
             lineHeight: '150%',
           })}>
             <p style={({ marginBottom: '6px' })}>Looking for something? I can help you find it.</p>
-            <p>Ask me anything about Jersey City!</p>
           </div>
         </div>}
         <div style={({

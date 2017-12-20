@@ -66,25 +66,23 @@ const TemplateBase = styled.div`
     }
   }
   .buttons {
-    display: flex;
-    flex-flow: column;
-    align-items: flex-end;
-    width: 100%;
     padding: 10px;
     font-size: 14px;
+    margin-bottom: 8px;
     a {
       color: #3237ff;
-      text-decoration: underline;
-      min-width: 100%;
-      text-align: right;
-      padding: 8px 5px;
+      text-decoration: none;
+      padding: 7px 9px 6px;
       font-weight: 300;
+      font-size: 12px;
+      border: 1px solid #3C3EFF;
+      border-radius: 50px;
+      margin-right: 6px;
       &:hover {
         cursor: pointer;
+        color: #FFF;
+        background: #3237ff;
       }
-    }
-    a:not(:last-child) {
-      border-bottom: 1px solid #FAFAFA;
     }
   }
 `;

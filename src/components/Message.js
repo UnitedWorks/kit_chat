@@ -19,7 +19,7 @@ const Message = styled.div`
     font-size: 14px;
     padding: 12px 12px 10px;
     border-radius: 20px;
-    background: #FAFAFA;
+    background: #FFF;
     color: #4e5a69;
     line-height: 140%;
     min-width: 40px;
@@ -47,9 +47,10 @@ const TemplateBase = styled.div`
   margin: 8px 0;
   color: #4e5a69;
   .card {
+    background: #FFF;
     display: flex;
     border-radius: 3px;
-    box-shadow: 0px 1px 4px #DDD;
+    box-shadow: 0px 1px 4px #E5E5E5;
   }
   .card .info {
     padding: 14px;

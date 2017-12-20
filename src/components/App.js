@@ -37,7 +37,6 @@ const Wrapper = styled.div`
     }
   }}
   ${props => {
-    console.log(props)
     if (props.showParam) {
       return css`
         position: absolute;
@@ -127,6 +126,7 @@ const ContainerMessages = styled.div`
   flex-flow: column;
   overflow-y: scroll;
   height: 100vh;
+  background: #FAFAFB;
   span {
     margin: 2px 0;
   }

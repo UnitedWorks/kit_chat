@@ -71,7 +71,7 @@ const TemplateBase = styled.div`
     font-size: 14px;
     a {
       color: #3237ff;
-      text-decoration: none;
+      text-decoration: underline;
       min-width: 100%;
       text-align: right;
       padding: 8px 5px;

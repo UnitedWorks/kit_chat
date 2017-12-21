@@ -118,6 +118,19 @@ const TemplateGeneric = TemplateBase.extend`
       a {
         text-align: left;
       }
+      @media(max-width: 480px) {
+        display: flex;
+        flex-direction: column;
+        a {
+          margin-right: 0;
+          margin-top: 4px;
+          text-align: center;
+          width: 100%;
+        }
+        a:first-of-type {
+          margin-top: 0;
+        }
+      }
     }
     .image-container {
       flex-shrink: 1;

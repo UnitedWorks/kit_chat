@@ -391,6 +391,7 @@ class App extends Component {
       const elem = ReactDOM.findDOMNode(this.refs.scrollToSpan);
       if (elem) elem.scrollIntoView(false);
     });
+    if (!this.source) return (<div />)
     // Return Element
     return (
       <Wrapper hinting={this.state.hinting && !this.state.openConversation} isMobile={this.state.isMobile} showParam={this.state.show}>

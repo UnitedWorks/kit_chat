@@ -365,11 +365,8 @@ class App extends Component {
     }
   };
 
-  clearLogs() {
-    this.setState({
-      ...this.state,
-      messages: [],
-    });
+  resetState() {
+    this.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
   }
 
   post(payload) {
@@ -407,14 +404,14 @@ class App extends Component {
               <p>{this.state.organization_name ? `${this.state.organization_name} Chatbot` : 'Your Local Gov Chatbot'}<sup style={({ fontSize: '8px', padding: '4px' })}>BETA</sup></p>
             </div>
             <div>
-              <img src="reset.svg" onClick={() => this.clearLogs()} />
+              <img src="reset.svg" onClick={() => this.resetState()} />
               {!this.state.show && <img src="close.svg" onClick={() => this.hideConversation()} />}
             </div>
           </ContainerHeader>
           <ContainerContent>
             <ContainerMessages>
               {
-                this.state.messages.slice(-100).map((a, i, arr) => (
+                this.state.messages.slice(-200).map((a, i, arr) => (
                   <Message
                     key={i}
                     message={a}

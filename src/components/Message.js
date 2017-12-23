@@ -66,9 +66,9 @@ const TemplateBase = styled.div`
     }
   }
   .buttons {
-    padding: 10px;
+    padding: 0 10px 10px;
     font-size: 14px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     a {
       color: #3237ff;
       text-decoration: none;
@@ -77,7 +77,7 @@ const TemplateBase = styled.div`
       font-size: 12px;
       border: 1px solid #3C3EFF;
       border-radius: 50px;
-      margin-right: 6px;
+      margin: 2px 4px;
       &:hover {
         cursor: pointer;
         color: #FFF;
@@ -113,23 +113,12 @@ const TemplateGeneric = TemplateBase.extend`
       justify-content: center;
     }
     .buttons {
-      display: inline-block;
+      display: inline-flex;
+      white-space: nowrap;
+      flex-wrap: wrap;
       min-width: initial;
       a {
         text-align: left;
-      }
-      @media(max-width: 480px) {
-        display: flex;
-        flex-direction: column;
-        a {
-          margin-right: 0;
-          margin-top: 4px;
-          text-align: center;
-          width: 100%;
-        }
-        a:first-of-type {
-          margin-top: 0;
-        }
       }
     }
     .image-container {
@@ -217,7 +206,7 @@ class MessageComponent extends Component {
                           {element.subtitle ? <p>{element.subtitle.length > 128 ? `${element.subtitle.substr(0, 128)}...` : element.subtitle}</p> : ''}
                         </div>
                         <div className="buttons">
-                        {element.buttons && element.buttons.map(self.buttonTemplate.bind(self))}
+                          {element.buttons && element.buttons.map(self.buttonTemplate.bind(self))}
                         </div>
                       </div>
                     </div>;

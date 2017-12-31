@@ -37,12 +37,5 @@ injectGlobal`
   }
 `;
 
-// For now, throttle how many people we show this to. If they've seen it, they will keep seeing it though
-if (localStorage.getItem('state') && JSON.parse(localStorage.getItem('state')).constituent_id) {
-  ReactDOM.render(<App />, document.getElementById('root'));
-} else {
-  if (Math.floor(Math.random() * 100) < 4) {
-    ReactDOM.render(<App />, document.getElementById('root'));
-  }
-}
+ReactDOM.render(<App />, document.getElementById('root'));
 // registerServiceWorker();

@@ -216,6 +216,7 @@ class App extends Component {
       if (e.data === 'init') {
         self.source = e.source;
         self.setState({ ...self.state, hinting: false });
+        // Run Hint
         setTimeout(() => {
           if (!this.state.openConversation) {
             self.source && self.source.postMessage('hint', '*');
@@ -270,20 +271,20 @@ class App extends Component {
 
   componentDidMount() {
     const self = this;
-    if (this.state.constituent_id === null) {
-      self.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
-    }
     if (this.state.show) {
       self.showConversation();
     }
-  };
+  }
 
   /* An awful hack for now */
   componentWillUpdate(nextProps, nextState) {
     localStorage.setItem('state', JSON.stringify(nextState));
   }
 
-  showConversation() {
+  async showConversation() {
+    if (this.state.constituent_id === null) {
+      await this.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
+    }
     this.setState({ ...this.state, openConversation: true });
     this.source && this.source.postMessage('show', '*');
   }
@@ -300,7 +301,7 @@ class App extends Component {
 
   submit(value) {
     this.send({ content: value, local: true });
-  };
+  }
 
   handleResponse(response) {
     const self = this;
@@ -316,17 +317,17 @@ class App extends Component {
       sent: { $set: false },
       constituent_id: { $set: response.meta.constituent_id }
     }));
-  };
+  }
 
   handleAction(data) {
     this.pushMessage({ content: data.title, local: true });
     this.post({ type: 'action', payload: { payload: data.payload }});
-  };
+  }
 
   send(message) {
     this.pushMessage(message);
     this.post({ type: 'message', payload: { text: message.content } });
-  };
+  }
 
   pushMessage(message) {
     const mentionsNotifications = typeof message.content === 'string' && (message.content.toLowerCase().includes('notification') || message.content.toLowerCase().includes('reminder'));
@@ -363,7 +364,7 @@ class App extends Component {
       utterance.pitch = 1;
       window.speechSynthesis.speak( utterance );
     }
-  };
+  }
 
   resetState() {
     this.post({ type: 'action', payload: { payload: 'GET_STARTED' } });
@@ -371,7 +372,7 @@ class App extends Component {
 
   post(payload) {
     const self = this;
-    fetch(`${this.BASE_URL}/conversations/webhook/http` +
+    return fetch(`${this.BASE_URL}/conversations/webhook/http` +
       (this.state.organization_id ? `?organization_id=${this.state.organization_id}` : '') +
       (this.state.constituent_id ? `&constituent_id=${this.state.constituent_id }` : ''), {
       method: "POST",
@@ -380,7 +381,7 @@ class App extends Component {
         'Content-Type': 'application/json',
       },
     }).then(a => a.json()).then(self.handleResponse.bind(self));
-  };
+  }
 
   render() {
     // Scroll to Bottom of Message Section

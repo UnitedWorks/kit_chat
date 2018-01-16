@@ -1,8 +1,5 @@
 (function() {
 
-  // Stop serving the widget atm
-  return;
-
   var org_id = document.querySelector('script#hey-mayor-script').attributes['data-org-id'].value;
   var body = document.querySelector('body'), frameWrapper = document.createElement('div');
   frameWrapper.id = 'hey-mayor-widget'; frameWrapper.style.zIndex = 2147483647; frameWrapper.style.position = 'absolute';

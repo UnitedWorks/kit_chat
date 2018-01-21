@@ -197,9 +197,9 @@ class MessageComponent extends Component {
                 {
                   message.content.elements.map((element, index) => {
                     return <div key={index} className={element.image_url ? 'card image' : 'card imageless'}>
-                      {element.image_url && <div className="image-container">
+                      {element.image_url && <a href={element.default_action && element.default_action.type === 'web_url' ? element.default_action.url : ''} target={element.default_action  && element.default_action.type === 'web_url' ? '_blank' : ''}><div className="image-container">
                         <img src={element.image_url} onError={(e) => (e.target.src = self.props.organization.picture || 'https://scontent.xx.fbcdn.net/v/t31.0-8/18589000_245329029282188_201697997574538644_o.png?oh=3c0896d62bc013dc7a520cd8aef2ec7d&oe=59B0D211')} />
-                      </div>}
+                      </div></a>}
                       <div className="body">
                         <div className="info">
                           <h4>{element.title}</h4>

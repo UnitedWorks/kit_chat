@@ -45,4 +45,3 @@ if (localStorage.getItem('state') && JSON.parse(localStorage.getItem('state')).c
     ReactDOM.render(<App />, document.getElementById('root'));
   }
 }
-// registerServiceWorker();

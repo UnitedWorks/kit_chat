@@ -1,4 +1,6 @@
 (function() {
+  // Turn off atm
+  return;
 
   var org_id = document.querySelector('script#hey-mayor-script').attributes['data-org-id'].value;
   var body = document.querySelector('body'), frameWrapper = document.createElement('div');
